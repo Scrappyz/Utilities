@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <iomanip>
 #include <vector>
 #include <map>
 #include <unordered_map>
@@ -90,51 +89,6 @@ void print(const std::unordered_set<T>& us, char append = '\0', const std::strin
         }
     }
     std::cout << "}" << append;
-}
-
-template<typename T>
-void print(const T& arg, char append = '\0')
-{
-    std::cout << arg << append;
-}
-
-template<typename T>
-void printTable(const std::vector<std::vector<T>>& v)
-{
-    // Get the number of rows and columns in the table
-    int numRows = v.size();
-    int numCols = (numRows > 0) ? v[0].size() : 0;
-
-    // Calculate the maximum width of each column based on the longest element
-    std::vector<int> maxColWidths(numCols, 0);
-    for (int i = 0; i < numRows; ++i) {
-        for (int j = 0; j < numCols; ++j) {
-            int elementWidth = std::to_string(v[i][j]).length();
-            if (elementWidth > maxColWidths[j]) {
-                maxColWidths[j] = elementWidth;
-            }
-        }
-    }
-
-    // Print the table header
-    for (int j = 0; j < numCols; ++j) {
-        std::cout << std::setw(maxColWidths[j]) << std::right << "Column " << j << " | ";
-    }
-    std::cout << std::endl;
-
-    // Print the separator row
-    for (int j = 0; j < numCols; ++j) {
-        std::cout << "-+-" << std::string(maxColWidths[j], '-') << "-+-";
-    }
-    std::cout << std::endl;
-
-    // Print each row of the table
-    for (int i = 0; i < numRows; ++i) {
-        for (int j = 0; j < numCols; ++j) {
-            std::cout << " | " << std::setw(maxColWidths[j]) << std::right << v[i][j] << " | ";
-        }
-        std::cout << std::endl;
-    }
 }
 
 
