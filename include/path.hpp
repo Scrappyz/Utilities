@@ -126,15 +126,8 @@ namespace utility {
         {
             bool pop_separator = p2.filename() == "." || p2.filename() == "..";
             std::string result;
-            if(p1.empty() && p2.empty()) {
-                return result;
-            } else if(p1.empty()) {
-                result = std::filesystem::weakly_canonical(p2).string();
-                if(pop_separator) {
-                    result.pop_back();
-                }
-                return result;
-            } else if(p2.empty()) {
+            
+            if(p2.empty()) {
                 pop_separator = p1.filename() == "." || p1.filename() == "..";
                 result = std::filesystem::weakly_canonical(p1).string();
                 if(pop_separator) {
