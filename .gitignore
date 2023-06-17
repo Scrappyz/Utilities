@@ -4,11 +4,13 @@
 !docs/*
 !include/
 !include/*
+!src/
+!src/*
 !test/
 !test/*
 !test/src/*
 test/bin/
 !.gitignore
 !test/googletest/
-!test/googletest/*
+!test/googletest/**
 
