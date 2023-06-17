@@ -6,9 +6,8 @@
 #elif defined(__linux__)
     #include <unistd.h>
     #include <sys/stat.h>
-#elif defined(__APPLE__)
-    #include <mach-o/dyld.h>
 #endif
+#include <iostream>
 
 namespace utility {
     namespace path {
@@ -116,12 +115,6 @@ namespace utility {
                 source_path = path;
             #elif defined(__linux__)
                 source_path = filesystem::canonical("/proc/self/exe");
-            #elif defined(__APPLE__)
-                char path[PATH_MAX];
-                uint32_t size = sizeof(path);
-                if (_NSGetExecutablePath(path, &size) == 0) {
-                    source_path = path;
-                }
             #else
                 throw std::runtime_error("[Error][sourcePath] Unknown Operating System");
             #endif
@@ -131,20 +124,30 @@ namespace utility {
         // joinPath
         std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
         {
+            bool pop_separator = p2.filename() == "." || p2.filename() == "..";
+            std::string result;
             if(p1.empty() && p2.empty()) {
-                return std::string();
+                return result;
             } else if(p1.empty()) {
-                return std::filesystem::weakly_canonical(p2).string();
+                result = std::filesystem::weakly_canonical(p2).string();
+                if(pop_separator) {
+                    result.pop_back();
+                }
+                return result;
             } else if(p2.empty()) {
-                return std::filesystem::weakly_canonical(p1).string();
+                pop_separator = p1.filename() == "." || p1.filename() == "..";
+                result = std::filesystem::weakly_canonical(p1).string();
+                if(pop_separator) {
+                    result.pop_back();
+                }
+                return result;
             }
 
-            std::filesystem::path result = std::filesystem::weakly_canonical(p1 / p2).string();
-            if(p2.filename().empty()) {
-                return result.string();
-            } else {
-                return result.parent_path().string();
+            result = std::filesystem::weakly_canonical(p1 / p2).string();
+            if(pop_separator) {
+                result.pop_back();
             }
+            return result;
         }
 
         std::string joinPath(const std::vector<std::filesystem::path>& paths)
@@ -161,10 +164,11 @@ namespace utility {
             }
             result = std::filesystem::weakly_canonical(result / paths.back());
 
-            if(paths.back().filename().empty()) {
-                return result.string();
-            } else {
+            bool pop_separator = paths.back().filename() == "." || paths.back().filename() == "..";
+            if(pop_separator) {
                 return result.parent_path().string();
+            } else {
+                return result.string();
             }
         }
 
