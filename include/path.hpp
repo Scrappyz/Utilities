@@ -155,14 +155,7 @@ namespace utility {
             for(int i = 1; i < paths.size()-1; i++) {
                 result /= paths[i];
             }
-            result = std::filesystem::weakly_canonical(result / paths.back());
-
-            bool pop_separator = paths.back().filename() == "." || paths.back().filename() == "..";
-            if(pop_separator) {
-                return result.parent_path().string();
-            } else {
-                return result.string();
-            }
+            return joinPath(result, paths.back());
         }
 
         void create(const std::filesystem::path& path)

@@ -85,13 +85,29 @@ TEST(joinPath, end_separator)
     EXPECT_EQ(joinPath("a/b/c/d/../", ""), "a\\b\\c\\");
 }
 
-// TEST(joinPaths, many)
-// {
-//     EXPECT_EQ(joinPath({}), "");
-//     EXPECT_EQ(joinPath({"a/b/c"}), "a\\b\\c");
-//     EXPECT_EQ(joinPath({"a/b/c/"}), "a\\b\\c\\");
-//     EXPECT_EQ(joinPath({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
-//     EXPECT_EQ(joinPath({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
-//     EXPECT_EQ(joinPath({"a/b/c/d/../.."}), "a\\b");
-//     EXPECT_EQ(joinPath({"a/b/c/d/../../"}), "a\\b\\");
-// }
+TEST(joinPaths, edge_case)
+{
+    EXPECT_EQ(joinPath({}), "");
+    EXPECT_EQ(joinPath({"", "", "", ""}), "");
+    EXPECT_EQ(joinPath({"", "a/b", "", "c/d"}), "a\\b\\c\\d");
+    EXPECT_EQ(joinPath({"", "a/b", "", "c/d/"}), "a\\b\\c\\d\\");
+}
+
+TEST(joinPaths, concatenate)
+{
+    EXPECT_EQ(joinPath({"a/b/c"}), "a\\b\\c");
+    EXPECT_EQ(joinPath({"a/b/c/"}), "a\\b\\c\\");
+    EXPECT_EQ(joinPath({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
+    EXPECT_EQ(joinPath({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
+    EXPECT_EQ(joinPath({"a/b/c/d", "e", "f", "g/h"}), "a\\b\\c\\d\\e\\f\\g\\h");
+    EXPECT_EQ(joinPath({"a/b/c/d", "e", "f", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
+    EXPECT_EQ(joinPath({"a/b/c/d", "e/", "f/", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
+}
+
+TEST(joinPaths, end_separator)
+{
+    EXPECT_EQ(joinPath({"a/b/c/d/../.."}), "a\\b");
+    EXPECT_EQ(joinPath({"a/b/c/d/../../"}), "a\\b\\");
+    EXPECT_EQ(joinPath({"a/b/c/d/../../", "e/f/..", "g"}), "a\\b\\e\\g");
+    EXPECT_EQ(joinPath({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
+}
