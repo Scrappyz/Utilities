@@ -83,6 +83,10 @@ TEST(joinPath, end_separator)
     EXPECT_EQ(joinPath("a/b/c/d", "./"), "a\\b\\c\\d\\");
     EXPECT_EQ(joinPath("a/b/c/d/..", ""), "a\\b\\c");
     EXPECT_EQ(joinPath("a/b/c/d/../", ""), "a\\b\\c\\");
+    EXPECT_EQ(joinPath("a/b/c/d/../../e", ""), "a\\b\\e");
+    EXPECT_EQ(joinPath("a/b/c/d/../../e/", ""), "a\\b\\e\\");
+    EXPECT_EQ(joinPath("", "a/b/c/d/../../e"), "a\\b\\e");
+    EXPECT_EQ(joinPath("", "a/b/c/d/../../e/"), "a\\b\\e\\");
 }
 
 TEST(joinPaths, edge_case)

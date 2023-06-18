@@ -124,7 +124,7 @@ namespace utility {
         // joinPath
         std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
         {
-            bool pop_separator = p2.filename() == "." || p2.filename() == "..";
+            bool pop_separator = false;
             std::string result;
             
             if(p2.empty()) {
@@ -136,6 +136,7 @@ namespace utility {
                 return result;
             }
 
+            pop_separator = p2.filename() == "." || p2.filename() == "..";
             result = std::filesystem::weakly_canonical(p1 / p2).string();
             if(pop_separator) {
                 result.pop_back();
