@@ -171,8 +171,9 @@ namespace utility {
         }
 
         // copy
-        void copy(const std::filesystem::path& from, std::filesystem::path to, const std::filesystem::copy_options& op = std::filesystem::copy_options::overwrite_existing)
+        void copy(const std::filesystem::path& from, std::filesystem::path to, const std::filesystem::copy_options& op = std::filesystem::copy_options::none)
         {
+            // add warning
             if(std::filesystem::exists(from)) {
                 if(std::filesystem::is_directory(from) && !from.filename().empty()) {
                     to /= from.filename();
@@ -194,6 +195,12 @@ namespace utility {
             }
         }
 
+        void copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op)
+        {
+            std::filesystem::copy_options option = _private::convertOption(op);
+            utility::path::copy(from, to, option);
+        }
+
         void remove(const std::filesystem::path& path)
         {
             if(std::filesystem::exists(path)) {
@@ -205,9 +212,16 @@ namespace utility {
             }
         }
 
-        void move(const std::filesystem::path& from, const std::filesystem::path& to, const std::filesystem::copy_options& op = std::filesystem::copy_options::overwrite_existing)
+        void move(const std::filesystem::path& from, const std::filesystem::path& to, const std::filesystem::copy_options& op = std::filesystem::copy_options::none)
         {
             utility::path::copy(from, to, op);
+            utility::path::remove(from);
+        }
+
+        void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op)
+        {
+            std::filesystem::copy_options option = _private::convertOption(op);
+            utility::path::copy(from, to, option);
             utility::path::remove(from);
         }
 
