@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <filesystem>
 #include <fstream>
@@ -7,7 +8,6 @@
     #include <unistd.h>
     #include <sys/stat.h>
 #endif
-#include <iostream>
 
 namespace utility {
     namespace path {
@@ -226,53 +226,51 @@ namespace utility {
             utility::path::remove(from);
         }
 
-        std::string find(const std::filesystem::path& search_path, const std::string& pattern, const PathTraversal& pt = PathTraversal::NonRecursive)
+        std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
         {
             if(std::filesystem::exists(search_path)) {
-                if(pt == PathTraversal::NonRecursive) {
-                    for(const auto& entry : std::filesystem::directory_iterator(search_path)) {
-                        std::string filename = entry.path().filename().string();
-                        if(filename == pattern) {
-                            return entry.path().string();
-                        }
-                    }
-                } else {
-                    for(const auto& entry : std::filesystem::recursive_directory_iterator(search_path)) {
-                        std::string filename = entry.path().filename().string();
-                        if(filename == pattern) {
-                            return entry.path().string();
-                        }
+                for(auto i = std::filesystem::recursive_directory_iterator(search_path); i != std::filesystem::recursive_directory_iterator(); i++) {
+                    if(max_depth >= 0 && i.depth() >= max_depth) {
+                        i.disable_recursion_pending();
+                    } 
+                    if(i->path().filename() == file_to_find) {
+                        return i->path().string();
                     }
                 }
                 return std::string();
             } else {
-                throw std::logic_error("[Error][find] Path does not exist");
+                throw std::runtime_error("[Error][find] Path does not exists");
             }
         }
 
-        std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& pattern, const PathTraversal& pt = PathTraversal::NonRecursive)
+        std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const PathTraversal& pt = PathTraversal::NonRecursive)
         {
+            int n = pt == PathTraversal::NonRecursive ? 0 : -1;
+            return utility::path::find(search_path, file_to_find, n);
+        }
+
+        std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
+        {
+            std::vector<std::string> matches;
             if(std::filesystem::exists(search_path)) {
-                std::vector<std::string> matches;
-                if(pt == PathTraversal::NonRecursive) {
-                    for(const auto& entry : std::filesystem::directory_iterator(search_path)) {
-                        std::string filename = entry.path().filename().string();
-                        if(filename == pattern) {
-                            matches.push_back(entry.path().string());
-                        }
-                    }
-                } else {
-                    for(const auto& entry : std::filesystem::recursive_directory_iterator(search_path)) {
-                        std::string filename = entry.path().filename().string();
-                        if(filename == pattern) {
-                            matches.push_back(entry.path().string());
-                        }
+                for(auto i = std::filesystem::recursive_directory_iterator(search_path); i != std::filesystem::recursive_directory_iterator(); i++) {
+                    if(max_depth >= 0 && i.depth() >= max_depth) {
+                        i.disable_recursion_pending();
+                    } 
+                    if(i->path().filename() == file_to_find) {
+                        matches.push_back(i->path().string());
                     }
                 }
                 return matches;
             } else {
-                throw std::logic_error("[Error][findAll] Path does not exist");
+                throw std::runtime_error("[Error][find] Path does not exists");
             }
+        }
+
+        std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const PathTraversal& pt = PathTraversal::NonRecursive)
+        {
+            int n = pt == PathTraversal::NonRecursive ? 0 : -1;
+            return utility::path::findAll(search_path, file_to_find, n);
         }
     }
 }
