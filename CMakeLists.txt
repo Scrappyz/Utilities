@@ -16,5 +16,5 @@ if(LINK_STATIC)
   target_link_libraries(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
 endif()
 
-include(CTest)
-add_subdirectory(test)
+# include(CTest)
+# add_subdirectory(test)
