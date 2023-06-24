@@ -9,13 +9,7 @@ namespace fs = std::filesystem;
 
 int main()
 {
-    cout << find(sourcePath(), "any.txt", 1) << endl;
-    cout << find(sourcePath(), "gg.txt", 1) << endl;
-    cout << find(sourcePath(), "gg.txt", PathTraversal::Recursive) << endl;
-    cout << find(currentPath(), "gg.txt", PathTraversal::Recursive) << endl;
-    cout << find(currentPath(), "gg.txt", 3) << endl;
-
-    out::print(findAll(currentPath(), "any.txt", PathTraversal::Recursive), '\n');
-    out::print(findAll(currentPath(), "any.txt", 10), '\n');
+    // copy(joinPath(sourcePath(), "temp/any.txt"), joinPath(sourcePath(), "temp/temp1"));
+    fs::copy_file(joinPath(sourcePath(), "temp/any.txt"), joinPath(sourcePath(), "temp/ex.txt"), fs::copy_options::skip_existing);
     return 0;
 }
