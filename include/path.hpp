@@ -162,25 +162,28 @@ namespace utility {
         // joinPath
         std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
         {
-            bool pop_separator = false;
             std::string result;
             
             if(p2.empty()) {
-                pop_separator = p1.filename() == "." || p1.filename() == "..";
                 result = std::filesystem::weakly_canonical(p1).string();
-                if(pop_separator) {
+                bool exist = std::filesystem::exists(result);
+                if(exist && p1.filename().empty()) {
+                    result += directorySeparator();
+                } else if(!exist && (p1.filename() == "." || p1.filename() == "..")) {
                     result.pop_back();
                 }
                 return result;
             }
 
-            // add separator if not exist and there is separator at the end
-            // no separator if exist regardless of end separator
+            // add separator if result does not exist and there is a separator at the end of p2 or it does not exist and p2 has ".." at the end
+            // no separator if result exists regardless of end separator in p2
             result = std::filesystem::weakly_canonical(p1 / p2).string();
-            // pop_separator = (p2.filename() == "." || p2.filename() == "..");
-            // if(pop_separator) {
-            //     result.pop_back();
-            // }
+            bool exist = std::filesystem::exists(result);
+            if(exist && p2.filename().empty()) {
+                result += directorySeparator();
+            } else if(!exist && (p2.filename() == "." || p2.filename() == "..")) {
+                result.pop_back();
+            }
             return result;
         }
 
