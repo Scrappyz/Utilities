@@ -9,6 +9,6 @@ namespace fs = std::filesystem;
 
 int main()
 {
-    
+    path::copy(path::joinPath(path::sourcePath(), "temp/any.txt"), path::sourcePath(), path::CopyOption::OverwriteExisting);
     return 0;
 }
