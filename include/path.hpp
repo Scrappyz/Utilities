@@ -46,7 +46,7 @@ namespace utility {
                 }
 
                 std::ofstream destination(to, std::ios::binary);
-                if (!destination.is_open()) {
+                if(!destination.is_open()) {
                     source.close();
                     return false;
                 }
@@ -174,11 +174,13 @@ namespace utility {
                 return result;
             }
 
-            pop_separator = p2.filename() == "." || p2.filename() == "..";
+            // add separator if not exist and there is separator at the end
+            // no separator if exist regardless of end separator
             result = std::filesystem::weakly_canonical(p1 / p2).string();
-            if(pop_separator) {
-                result.pop_back();
-            }
+            // pop_separator = (p2.filename() == "." || p2.filename() == "..");
+            // if(pop_separator) {
+            //     result.pop_back();
+            // }
             return result;
         }
 
@@ -209,21 +211,22 @@ namespace utility {
             }
         }
 
-        // copy
-        // void copy(const std::filesystem::path& from, std::filesystem::path to, const std::filesystem::copy_options& op)
-        // {
-        //     std::cout << "Do Stuff" << std::endl;
-        //     // add warning
-        //     if(std::filesystem::exists(from)) {
-        //         if(std::filesystem::is_directory(from) && !from.filename().empty()) {
-        //             to /= from.filename();
-        //             std::filesystem::create_directories(to);
-        //         } 
-        //         char ch;
+        void copy(const std::filesystem::path& from, std::filesystem::path to, const CopyOption& op = CopyOption::None)
+        {
+            if(std::filesystem::exists(from)) {
+                std::cout << from.filename() << std::endl;
+                if(std::filesystem::is_directory(from) && !from.filename().empty()) {
+                    // to /= from.filename();
+                    // std::filesystem::create_directories(to);
+                } 
+
+                char ch;
                 // if(std::filesystem::is_directory(from)) {
                 //     for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
                 //         std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
-                //         if(op == std::filesystem::copy_options::none && ch != 'a' && ch != 'A') {
+                //         bool is_source_dir = std::filesystem::is_directory(entry.path());
+                //         bool destination_exists = std::filesystem::exists(copy_to);
+                //         if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
                 //             ch = _private::copyWarning(copy_to.filename());
                 //         }
 
@@ -231,81 +234,30 @@ namespace utility {
                 //             return;
                 //         }
 
-                //         if(std::filesystem::is_directory(entry.path())) { 
+                //         if(is_source_dir) { 
                 //             std::filesystem::create_directories(copy_to);
-                //         } else if(op == std::filesystem::copy_options::skip_existing || op == std::filesystem::copy_options::overwrite_existing) {
-                //             std::filesystem::copy_file(entry, copy_to, op);
-                //         } else {
-                //             if(ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                //                 std::filesystem::copy_file(entry, copy_to, std::filesystem::copy_options::overwrite_existing);
-                //             } else {
-                //                 std::filesystem::copy_file(entry, copy_to, std::filesystem::copy_options::skip_existing);
-                //             }
-                //         }
+                //         } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                //             _private::copyFile(entry.path(), copy_to);
+                //         } 
                 //     }
                 // } else {
-                //     std::filesystem::path copy_to = std::filesystem::is_directory(to) ? joinPath(to, filename(from)) : to;
-                //     if(op == std::filesystem::copy_options::none && ch != 'a' && ch != 'A') {
+                //     std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / filename(from) : to;
+                //     bool is_source_dir = std::filesystem::is_directory(from);
+                //     bool destination_exists = std::filesystem::exists(copy_to);
+                //     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
                 //         ch = _private::copyWarning(copy_to.filename());
                 //     }
+
                 //     if(ch == 'x' || ch == 'X') {
                 //         return;
                 //     }
-                //     if(ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                //         std::filesystem::copy_file(from, copy_to, std::filesystem::copy_options::overwrite_existing);
-                //     } else {
-                //         std::filesystem::copy_file(from, copy_to, std::filesystem::copy_options::skip_existing);
-                //     }
+
+                //     if(is_source_dir) { 
+                //         std::filesystem::create_directories(copy_to);
+                //     } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                //         _private::copyFile(from, copy_to);
+                //     } 
                 // }
-        //     }
-        // }
-
-        void copy(const std::filesystem::path& from, std::filesystem::path to, const CopyOption& op = CopyOption::None)
-        {
-            if(std::filesystem::exists(from)) {
-                if(std::filesystem::is_directory(from) && !from.filename().empty()) {
-                    to /= from.filename();
-                    std::filesystem::create_directories(to);
-                } 
-
-                char ch;
-                if(std::filesystem::is_directory(from)) {
-                    for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
-                        std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
-                        bool is_source_dir = std::filesystem::is_directory(from);
-                        bool destination_exists = std::filesystem::exists(copy_to);
-                        if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                            ch = _private::copyWarning(copy_to.filename());
-                        }
-
-                        if(ch == 'x' || ch == 'X') {
-                            return;
-                        }
-
-                        if(is_source_dir) { 
-                            std::filesystem::create_directories(copy_to);
-                        } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                            _private::copyFile(from, copy_to);
-                        } 
-                    }
-                } else {
-                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / filename(from) : to;
-                    bool is_source_dir = std::filesystem::is_directory(from);
-                    bool destination_exists = std::filesystem::exists(copy_to);
-                    if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                        ch = _private::copyWarning(copy_to.filename());
-                    }
-
-                    if(ch == 'x' || ch == 'X') {
-                        return;
-                    }
-
-                    if(is_source_dir) { 
-                        std::filesystem::create_directories(copy_to);
-                    } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                        _private::copyFile(from, copy_to);
-                    } 
-                }
             }
         }
 
