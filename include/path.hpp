@@ -175,8 +175,6 @@ namespace utility {
                 return result;
             }
 
-            // add separator if result does not exist and there is a separator at the end of p2 or it does not exist and p2 has ".." at the end
-            // no separator if result exists regardless of end separator in p2
             result = std::filesystem::weakly_canonical(p1 / p2).string();
             bool exist = std::filesystem::exists(result);
             if(exist && p2.filename().empty()) {
@@ -217,50 +215,52 @@ namespace utility {
         void copy(const std::filesystem::path& from, std::filesystem::path to, const CopyOption& op = CopyOption::None)
         {
             if(std::filesystem::exists(from)) {
-                std::cout << from.filename() << std::endl;
                 if(std::filesystem::is_directory(from) && !from.filename().empty()) {
-                    // to /= from.filename();
-                    // std::filesystem::create_directories(to);
+                    to /= from.filename();
+                    std::filesystem::create_directories(to);
                 } 
 
                 char ch;
-                // if(std::filesystem::is_directory(from)) {
-                //     for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
-                //         std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
-                //         bool is_source_dir = std::filesystem::is_directory(entry.path());
-                //         bool destination_exists = std::filesystem::exists(copy_to);
-                //         if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                //             ch = _private::copyWarning(copy_to.filename());
-                //         }
+                if(std::filesystem::is_directory(from)) {
+                    for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
+                        std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
+                        bool is_source_dir = std::filesystem::is_directory(entry.path());
+                        bool destination_exists = std::filesystem::exists(copy_to);
+                        if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
+                            ch = _private::copyWarning(copy_to.filename());
+                        }
 
-                //         if(ch == 'x' || ch == 'X') {
-                //             return;
-                //         }
+                        if(ch == 'x' || ch == 'X') {
+                            return;
+                        }
 
-                //         if(is_source_dir) { 
-                //             std::filesystem::create_directories(copy_to);
-                //         } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                //             _private::copyFile(entry.path(), copy_to);
-                //         } 
-                //     }
-                // } else {
-                //     std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / filename(from) : to;
-                //     bool is_source_dir = std::filesystem::is_directory(from);
-                //     bool destination_exists = std::filesystem::exists(copy_to);
-                //     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                //         ch = _private::copyWarning(copy_to.filename());
-                //     }
+                        if(is_source_dir) { 
+                            std::filesystem::create_directories(copy_to);
+                        } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                            _private::copyFile(entry.path(), copy_to);
+                        } 
+                    }
+                } else {
+                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / filename(from) : to;
+                    bool is_source_dir = std::filesystem::is_directory(from);
+                    bool destination_exists = std::filesystem::exists(copy_to);
+                    if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
+                        ch = _private::copyWarning(copy_to.filename());
+                    }
 
-                //     if(ch == 'x' || ch == 'X') {
-                //         return;
-                //     }
+                    if(ch == 'x' || ch == 'X') {
+                        return;
+                    }
 
-                //     if(is_source_dir) { 
-                //         std::filesystem::create_directories(copy_to);
-                //     } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                //         _private::copyFile(from, copy_to);
-                //     } 
-                // }
+                    if(is_source_dir) { 
+                        std::filesystem::create_directories(copy_to);
+                    } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                        _private::copyFile(from, copy_to);
+                    } 
+                }
+
+            } else {
+                throw std::runtime_error("[Error][copy] " + from.string() + "does not exist");
             }
         }
 
@@ -275,18 +275,11 @@ namespace utility {
             }
         }
 
-        // void move(const std::filesystem::path& from, const std::filesystem::path& to, const std::filesystem::copy_options& op = std::filesystem::copy_options::none)
-        // {
-        //     utility::path::copy(from, to, op);
-        //     utility::path::remove(from);
-        // }
-
-        // void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op)
-        // {
-        //     std::filesystem::copy_options option = _private::convertOption(op);
-        //     // utility::path::copy(from, to, option);
-        //     // utility::path::remove(from);
-        // }
+        void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+        {
+            utility::path::copy(from, to, op);
+            utility::path::remove(from);
+        }
 
         std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
         {
