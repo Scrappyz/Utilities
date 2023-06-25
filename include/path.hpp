@@ -17,16 +17,6 @@ namespace utility {
         enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
         namespace _private {
-            
-            std::filesystem::copy_options convertOption(const CopyOption& op)
-            {
-                if(op == CopyOption::SkipExisting)
-                    return std::filesystem::copy_options::skip_existing;
-                else if(op == CopyOption::OverwriteExisting)
-                    return std::filesystem::copy_options::overwrite_existing;
-                else
-                    return std::filesystem::copy_options::none;
-            }
 
             char copyWarning(const std::filesystem::path& path)
             {
@@ -274,26 +264,19 @@ namespace utility {
 
         void copy(const std::filesystem::path& from, std::filesystem::path to, const CopyOption& op = CopyOption::None)
         {
-            // folder -> folder (check)
-            // file -> file (check)
-            // folder -> file (check)
-            // file -> folder (check)
             // should return different errors
             if(std::filesystem::exists(from)) {
-                // if(std::filesystem::is_directory(from) && !from.filename().empty()) {
-                //     to /= from.filename();
-                //     std::filesystem::create_directories(to);
-                // } 
-
                 char ch;
                 if(std::filesystem::is_directory(from)) {
                     if(!std::filesystem::is_directory(to)) {
                         throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
                     }
+
                     if(!from.filename().empty()) {
                         to /= from.filename();
                         std::filesystem::create_directories(to);
                     }
+
                     for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
                         std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
                         bool is_source_dir = std::filesystem::is_directory(entry.path());
@@ -331,7 +314,7 @@ namespace utility {
                     } 
                 }
             } else {
-                throw std::runtime_error("[Error][copy] " + from.string() + "does not exist");
+                throw std::runtime_error("[Error][copy] \"" + from.string() + "\" does not exist");
             }
         }
 
