@@ -3,7 +3,7 @@ Defined in header `path.hpp`
 
 | Overloads |
 | --- |
-| bool isAbsolutePath(const std::filesystem::path& path) |
+| `bool isAbsolutePath(const std::filesystem::path& path)` |
 
 ## Parameters
 `path` - the path to check
