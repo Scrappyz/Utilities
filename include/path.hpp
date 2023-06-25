@@ -141,6 +141,11 @@ namespace path {
         return source_path.parent_path().string();
     }
 
+    std::string rootName(const std::filesystem::path& path)
+    {
+        return path.root_name().string();
+    }
+
     std::string absolutePath(const std::filesystem::path& path)
     {
         return std::filesystem::absolute(path).string();
