@@ -23,7 +23,7 @@ Defined in namespace `path`
 | --- | --- |
 | [exists](Functions/exists.md) | checks if the given path exists |
 | [isAbsolutePath](Functions/isAbsolutePath.md) | checks if the given path is an absolute path |
-| isRelativePath | checks if the given path is a relative path |
+| [isRelativePath](Functions/isRelativePath.md) | checks if the given path is a relative path |
 
 
 
