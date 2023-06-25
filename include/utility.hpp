@@ -25,6 +25,15 @@ namespace utility {
             return true;
         }
 
+        bool compareFloat(double a, double b, double epsilon = 1e-9)
+        {
+            double c = a - b;
+            if(c < 0) {
+                c *= -1;
+            }
+            return c < epsilon;
+        }
+
         template<typename T>
         double getSum(const std::vector<T>& v)
         {

@@ -14,6 +14,7 @@ namespace utility {
         
         enum class CopyOption {None, SkipExisting, OverwriteExisting};
         enum class PathTraversal {NonRecursive, Recursive};
+        enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
         namespace _private {
             
@@ -67,6 +68,21 @@ namespace utility {
 
         }
 
+        bool exists(const std::filesystem::path& path)
+        {
+            return std::filesystem::exists(path);
+        }
+
+        bool isAbsolutePath(const std::filesystem::path& path)
+        {
+            return path.is_absolute();
+        }
+
+        bool isRelativePath(const std::filesystem::path& path)
+        {
+            return path.is_relative();
+        }
+
         bool isValidFilenameChar(char ch) // checks if character passed is a valid character for filenames
         {
             switch(ch) {
@@ -95,7 +111,7 @@ namespace utility {
             return ch == preferred || ch == '/' && preferred == '\\';
         }
 
-        bool hasFileExtension(const std::filesystem::path& path)
+        bool hasFileExtension(const std::filesystem::path& path) // checks if a path has a file extension
         {
             std::string temp = path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
             int i = temp.size()-1;
@@ -134,6 +150,20 @@ namespace utility {
             return path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
         }
 
+        double fileSize(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte)
+        {
+            double size = std::filesystem::file_size(path);
+            if(metric == SizeMetric::Kilobyte) {
+                return size / 1024;
+            } else if(metric == SizeMetric::Megabyte) {
+                return size / (1024*1024);
+            } else if(metric == SizeMetric::Gigabyte) {
+                return size / (1024*1024*1024);
+            } else {
+                return size;
+            }
+        }
+
         char directorySeparator() // returns the preferred directory separator of your operating system
         {
             return std::filesystem::path::preferred_separator;
@@ -157,6 +187,16 @@ namespace utility {
                 throw std::runtime_error("[Error][sourcePath] Unknown Operating System");
             #endif
             return source_path.parent_path().string();
+        }
+
+        std::string absolutePath(const std::filesystem::path& path)
+        {
+            return std::filesystem::absolute(path).string();
+        }
+
+        std::string relativePath(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
+        {
+            return std::filesystem::relative(path, base_path).string();
         }
 
         // joinPath
@@ -200,11 +240,12 @@ namespace utility {
             return joinPath(result, paths.back());
         }
 
-        void create(const std::filesystem::path& path)
+        void create(const std::filesystem::path& path, const std::string& data = "")
         {
             if(!std::filesystem::exists(path)) {
                 if(hasFileExtension(path)) {
                     std::ofstream file(path);
+                    file << data;
                     file.close();
                 } else {
                     std::filesystem::create_directories(path);
@@ -212,16 +253,47 @@ namespace utility {
             }
         }
 
+        void create(const std::filesystem::path& path, const std::vector<std::string>& data)
+        {
+            if(!std::filesystem::exists(path)) {
+                std::string str;
+                for(int i = 0; i < data.size(); i++) {
+                    str += data[i];
+                    if(i < data.size()-1) {
+                        str.push_back('\n');
+                    }
+                }
+                create(path, str);
+            }
+        }
+
+        void rename(const std::filesystem::path& path, const std::string& new_name)
+        {
+            std::filesystem::rename(path, path.parent_path() / new_name);
+        }
+
         void copy(const std::filesystem::path& from, std::filesystem::path to, const CopyOption& op = CopyOption::None)
         {
+            // folder -> folder (check)
+            // file -> file (check)
+            // folder -> file (check)
+            // file -> folder (check)
+            // should return different errors
             if(std::filesystem::exists(from)) {
-                if(std::filesystem::is_directory(from) && !from.filename().empty()) {
-                    to /= from.filename();
-                    std::filesystem::create_directories(to);
-                } 
+                // if(std::filesystem::is_directory(from) && !from.filename().empty()) {
+                //     to /= from.filename();
+                //     std::filesystem::create_directories(to);
+                // } 
 
                 char ch;
                 if(std::filesystem::is_directory(from)) {
+                    if(!std::filesystem::is_directory(to)) {
+                        throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
+                    }
+                    if(!from.filename().empty()) {
+                        to /= from.filename();
+                        std::filesystem::create_directories(to);
+                    }
                     for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
                         std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
                         bool is_source_dir = std::filesystem::is_directory(entry.path());
@@ -258,7 +330,6 @@ namespace utility {
                         _private::copyFile(from, copy_to);
                     } 
                 }
-
             } else {
                 throw std::runtime_error("[Error][copy] " + from.string() + "does not exist");
             }
@@ -278,7 +349,7 @@ namespace utility {
         void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
         {
             utility::path::copy(from, to, op);
-            utility::path::remove(from);
+            utility::path::remove(from); // should not run if copy operation is cancelled
         }
 
         std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
