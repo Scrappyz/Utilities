@@ -7,12 +7,12 @@ Defined in header `path.hpp`
 | std::string joinPath(const std::vector&lt;std::filesystem::path&gt;& paths) |
 
 ## Parameters
-`p1` - a path
-`p2` - another path
+`p1` - a path \
+`p2` - another path \
 `paths` - a list of paths
 
 ## Return Value
-Concatenates two paths or a list of paths.
+Concatenates two or more paths together.
 
 ## Notes
 - If there is a directory separator at the end of the last path, it will preserve the separator.

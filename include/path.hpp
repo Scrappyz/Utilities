@@ -17,6 +17,7 @@ namespace path {
     enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
     namespace _private { // forward declaration
+        char copyWarning(const std::filesystem::path& path);
         void copy(const std::filesystem::path& from, std::filesystem::path to, bool move, const CopyOption& op);
     }
 
@@ -86,6 +87,16 @@ namespace path {
     bool hasFileExtension(const std::filesystem::path& path)
     {
         return !fileExtension(path).empty();
+    }
+
+    bool isDirectory(const std::filesystem::path& path)
+    {
+        return std::filesystem::is_directory(path);
+    }
+
+    bool isFile(const std::filesystem::path& path)
+    {
+        return std::filesystem::is_regular_file(path);
     }
 
     std::string filename(const std::filesystem::path& path) 
@@ -197,21 +208,26 @@ namespace path {
             } else {
                 std::filesystem::create_directories(path);
             }
+        } else if(std::filesystem::is_regular_file(path)) {
+            char ch = _private::copyWarning(path.filename());
+            if(ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                std::ofstream file(path);
+                file << data;
+                file.close();
+            }
         }
     }
 
     void create(const std::filesystem::path& path, const std::vector<std::string>& data)
     {
-        if(!std::filesystem::exists(path)) {
-            std::string str;
-            for(int i = 0; i < data.size(); i++) {
-                str += data[i];
-                if(i < data.size()-1) {
-                    str.push_back('\n');
-                }
+        std::string str;
+        for(int i = 0; i < data.size(); i++) {
+            str += data[i];
+            if(i < data.size()-1) {
+                str.push_back('\n');
             }
-            create(path, str);
         }
+        create(path, str);
     }
 
     void rename(const std::filesystem::path& path, const std::string& new_name)

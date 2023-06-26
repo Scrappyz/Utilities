@@ -6,7 +6,7 @@ Defined in header `path.hpp`
 | double fileSize(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte) |
 
 ## Parameters
-`path` - the path to get the size of
+`path` - the path to get the size of \
 `metric` - the unit of measurement of the size
 
 ## Return Value

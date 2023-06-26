@@ -19,7 +19,7 @@ The Path library aims to simplify and improve the process of performing operatio
 Defined in header `path.hpp` \
 Defined in namespace `path`
 
-| Name | Description |
+| Enum | Description |
 | --- | --- |
 | [CopyOption](Enums/CopyOption.md) | specifies what to automatically do with existing files |
 | [Traversal](Enums/Traversal.md) | specifies what type of filesystem traversal to use |
@@ -38,6 +38,8 @@ Defined in namespace `path`
 | [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
 | [fileExtension](Functions/fileExtension.md) | returns the file extension of a given path or filename |
 | [hasFileExtension](Functions/hasFileExtension.md) | checks if a given path or filename has an extension |
+| [isDirectory](Functions/isDirectory.md) | checks if a given path is a directory |
+| [isFile](Functions/isFile.md) | checks if a given path is a file |
 | [filename](Functions/filename.md) | returns the filename of a given path |
 | [fileSize](Functions/fileSize.md) | returns the file size of a given path |
 | [directorySeparator](Functions/directorySeparator.md) | returns a directory separator character |
