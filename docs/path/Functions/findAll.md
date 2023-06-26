@@ -9,7 +9,7 @@ Defined in header `path.hpp`
 ## Parameter
 `search_path` - the path to search \
 `file_to_find` - the file to find \
-`pt` - the type of traversal to use \
+`pt` - the type of traversal to use (see [Traversal](../Enums/Traversal.md)) \
 `max_depth` - the max depth to search for the file 
 
 ## Return Value
