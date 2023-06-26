@@ -7,7 +7,11 @@ Defined in header `path.hpp`
 
 ## Parameters
 `path` - the path to get the size of \
+<<<<<<< HEAD
 `metric` - the unit of measurement of the size
+=======
+`metric` - the unit of measurement of the file size (see [SizeMetric](../Enums/SizeMetric.md))
+>>>>>>> C++-dev
 
 ## Return Value
 Returns a `double` that represents the size of the given path in the given size metric.
