@@ -1,9 +1,9 @@
-## path::isAbsolutePath
+## path::isAbsolute
 Defined in header `path.hpp`
 
-| Overloads |
+| Declarations |
 | --- |
-| bool isAbsolutePath(const std::filesystem::path& path) |
+| bool isAbsolute(const std::filesystem::path& path) |
 
 ## Parameters
 `path` - the path to check
@@ -20,8 +20,8 @@ using namespace std;
 
 int main()
 {
-    cout << path::isAbsolutePath("bin/debug") << endl;
-    cout << path::isAbsolutePath("D:/bin/debug") << endl;
+    cout << path::isAbsolute("bin/debug") << endl;
+    cout << path::isAbsolute("D:/bin/debug") << endl;
     return 0;
 }
 ```

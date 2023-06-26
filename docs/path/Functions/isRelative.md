@@ -1,9 +1,9 @@
-## path::isRelativePath
+## path::isRelative
 Defined in `path.hpp`
 
-| Overloads |
+| Declarations |
 | --- |
-| bool isRelativePath(const std::filesystem::path& path) |
+| bool isRelative(const std::filesystem::path& path) |
 
 ## Parameters
 `path` - the path to check
@@ -20,8 +20,8 @@ using namespace std;
 
 int main()
 {
-    cout << path::isRelativePath("bin/debug") << endl;
-    cout << path::isRelativePath("D:/bin/debug") << endl;
+    cout << path::isRelative("bin/debug") << endl;
+    cout << path::isRelative("D:/bin/debug") << endl;
     return 0;
 }
 ```

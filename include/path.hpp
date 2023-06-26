@@ -13,7 +13,7 @@
 namespace path {
     
     enum class CopyOption {None, SkipExisting, OverwriteExisting};
-    enum class PathTraversal {NonRecursive, Recursive};
+    enum class Traversal {NonRecursive, Recursive};
     enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
     namespace _private { // forward declaration
@@ -25,12 +25,12 @@ namespace path {
         return std::filesystem::exists(path);
     }
 
-    bool isAbsolutePath(const std::filesystem::path& path)
+    bool isAbsolute(const std::filesystem::path& path)
     {
         return path.is_absolute();
     }
 
-    bool isRelativePath(const std::filesystem::path& path)
+    bool isRelative(const std::filesystem::path& path)
     {
         return path.is_relative();
     }
@@ -57,27 +57,13 @@ namespace path {
         }
     }
 
-    bool isDirectorySeparator(char ch) // checks if the character passed is a directory separator
+    bool isDirectorySeparator(char ch) 
     {
         char preferred = std::filesystem::path::preferred_separator;
         return ch == preferred || ch == '/' && preferred == '\\';
     }
 
-    bool hasFileExtension(const std::filesystem::path& path) // checks if a path has a file extension
-    {
-        std::string temp = path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
-        int i = temp.size()-1;
-        while(i > 0 && (temp[i] == ' ' || isDirectorySeparator(temp[i]))) {
-            i--;
-        }
-        while(i > 0 && temp[i] != '.' && !isDirectorySeparator(temp[i])) {
-            i--;
-        }
-
-        return i >= 1 && i < temp.size()-1 && temp[i] == '.' && isValidFilenameChar(temp[i-1]);
-    }
-
-    std::string fileExtension(const std::filesystem::path& path) // returns the file extension of a given path
+    std::string fileExtension(const std::filesystem::path& path)
     {
         std::string temp = path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
         int i = temp.size()-1;
@@ -97,7 +83,12 @@ namespace path {
         return result;
     }
 
-    std::string filename(const std::filesystem::path& path) // returns the filename from a path
+    bool hasFileExtension(const std::filesystem::path& path)
+    {
+        return !fileExtension(path).empty();
+    }
+
+    std::string filename(const std::filesystem::path& path) 
     {
         return path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
     }
@@ -116,17 +107,27 @@ namespace path {
         }
     }
 
-    char directorySeparator() // returns the preferred directory separator of your operating system
+    char directorySeparator() 
     {
         return std::filesystem::path::preferred_separator;
     }
 
-    std::string currentPath() // returns the current path you are in the command line
+    std::string absolute(const std::filesystem::path& path)
+    {
+        return std::filesystem::absolute(path).string();
+    }
+
+    std::string relative(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
+    {
+        return std::filesystem::relative(path, base_path).string();
+    }
+
+    std::string currentPath() 
     {
         return std::filesystem::current_path().string();
     }
 
-    std::string sourcePath() // returns the path to the executable
+    std::string sourcePath() 
     {
         std::filesystem::path source_path;
         #if defined(_WIN32)
@@ -146,17 +147,6 @@ namespace path {
         return path.root_name().string();
     }
 
-    std::string absolutePath(const std::filesystem::path& path)
-    {
-        return std::filesystem::absolute(path).string();
-    }
-
-    std::string relativePath(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
-    {
-        return std::filesystem::relative(path, base_path).string();
-    }
-
-    // joinPath
     std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
         std::string result;
@@ -267,9 +257,9 @@ namespace path {
         }
     }
 
-    std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const PathTraversal& pt = PathTraversal::NonRecursive)
+    std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
     {
-        int n = pt == PathTraversal::NonRecursive ? 0 : -1;
+        int n = pt == Traversal::NonRecursive ? 0 : -1;
         return path::find(search_path, file_to_find, n);
     }
 
@@ -291,9 +281,9 @@ namespace path {
         }
     }
 
-    std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const PathTraversal& pt = PathTraversal::NonRecursive)
+    std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
     {
-        int n = pt == PathTraversal::NonRecursive ? 0 : -1;
+        int n = pt == Traversal::NonRecursive ? 0 : -1;
         return path::findAll(search_path, file_to_find, n);
     }
 

@@ -1,7 +1,7 @@
 #include "path.hpp"
 #include "gtest/gtest.h"
 
-using namespace utility::path;
+using namespace path;
 
 TEST(isValidFilenameChar, check)
 {
