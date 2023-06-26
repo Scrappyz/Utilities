@@ -3,14 +3,28 @@
 
 using namespace std;
 
+void printVector(const vector<string>& v)
+{
+    if(v.empty()) {
+        cout << "EMPTY" << endl;
+        return;
+    }
+    for(int i = 0; i < v.size(); i++) {
+        cout << "\"" << v[i] << "\"" << endl; 
+    }
+}
+
 int main()
 {
-    cout << path::joinPath("a/b/c/d", "e/f/g") << endl;
-    cout << path::joinPath("a/b/c/d", "e/f/g/") << endl; // separator at the end will be preserved
-    cout << path::joinPath("a/b/c/d", "../..") << endl;
-    cout << path::joinPath("a/b/c/d", "../../") << endl; // separator at the end will be preserved
-    cout << path::joinPath({"a/b/c/d", "../..", "e/f/g", "h/i/.."}) << endl;
-    cout << path::joinPath({"a/b/c/d", "../..", "e/f/g", "h/i/../"}) << endl; // preserve end separator
+    printVector(path::findAll(path::currentPath(), "sub2test.txt")); // default to non-recursive
+    cout << "=====================================================" << endl;
+    printVector(path::findAll(path::currentPath(), "sub2test.txt", path::Traversal::Recursive));
+    cout << "=====================================================" << endl;
+    printVector(path::findAll(path::currentPath(), "sub2test.txt", 1)); // can only go as deep as 1 level
+    cout << "=====================================================" << endl;
+    printVector(path::findAll(path::currentPath(), "sub2test.txt", 2));
+    cout << "=====================================================" << endl;
+    printVector(path::findAll(path::currentPath(), "sub2test.txt", 3));
 
     return 0;
 }
