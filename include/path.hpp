@@ -7,6 +7,8 @@
 #elif defined(__linux__)
     #include <unistd.h>
     #include <sys/stat.h>
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
 #endif
 
 
@@ -159,7 +161,7 @@ namespace path {
             char path[MAX_PATH];
             GetModuleFileName(NULL, path, MAX_PATH);
             source_path = path;
-        #elif defined(__linux__)
+        #elif defined(__linux__) || defined(__apple__)
             source_path = filesystem::canonical("/proc/self/exe");
         #else
             throw std::runtime_error("[Error][sourcePath] Unknown Operating System");
