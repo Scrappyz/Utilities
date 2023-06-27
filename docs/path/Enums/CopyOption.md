@@ -6,6 +6,7 @@ Defined in header `path.hpp`
 | None | prompts the user what to do if a file already exists (default) |
 | SkipExisting | skips all existing files |
 | OverwriteExisting | overwrites all existing files |
+| OverwriteDirectory | deletes all the contents in the destination directory before copying the source |
 
 ## Example
 ```
