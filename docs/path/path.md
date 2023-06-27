@@ -2,7 +2,7 @@
 The Path library aims to simplify and improve the process of performing operations on file systems with the `<filesystem>` library.
 
 ## Minimum C++ Version
-- [\C++17](https://en.cppreference.com/w/cpp/17)
+- [C++17](https://en.cppreference.com/w/cpp/17)
 
 ## Includes
 - [\<iostream>](https://en.cppreference.com/w/cpp/io/basic_iostream)
