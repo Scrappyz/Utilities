@@ -12,13 +12,13 @@
 
 namespace path {
     
-    enum class CopyOption {None, SkipExisting, OverwriteExisting};
+    enum class CopyOption {None, SkipExisting, OverwriteExisting, OverwriteDirectory};
     enum class Traversal {NonRecursive, Recursive};
     enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
     namespace _private { // forward declaration
         char copyWarning(const std::filesystem::path& path);
-        void copy(const std::filesystem::path& from, std::filesystem::path to, bool move, const CopyOption& op);
+        void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
     }
 
     bool exists(const std::filesystem::path& path)
@@ -104,17 +104,31 @@ namespace path {
         return path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
     }
 
-    double fileSize(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte)
+    double size(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte)
     {
-        double size = std::filesystem::file_size(path);
-        if(metric == SizeMetric::Kilobyte) {
-            return size / 1024;
-        } else if(metric == SizeMetric::Megabyte) {
-            return size / (1024*1024);
-        } else if(metric == SizeMetric::Gigabyte) {
-            return size / (1024*1024*1024);
+        if(std::filesystem::exists(path)) {
+            std::uintmax_t space = 0;
+            if(std::filesystem::is_directory(path)) {
+                for(const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+                    if(!std::filesystem::is_directory(entry.path())) {
+                        space += std::filesystem::file_size(entry.path());
+                    }
+                }
+            } else {
+                space = std::filesystem::file_size(path);
+            }
+
+            if(metric == SizeMetric::Kilobyte) {
+                return (double)space / 1024;
+            } else if(metric == SizeMetric::Megabyte) {
+                return (double)space / (1024*1024);
+            } else if(metric == SizeMetric::Gigabyte) {
+                return (double)space / (1024*1024*1024);
+            } else {
+                return (double)space;
+            }
         } else {
-            return size;
+            return -1;
         }
     }
 
@@ -250,6 +264,9 @@ namespace path {
         if(std::filesystem::exists(path)) {
             if(std::filesystem::is_directory(path)) {
                 std::filesystem::remove_all(path);
+                if(path.filename().empty()) {
+                    std::filesystem::create_directories(path);
+                }
             } else {
                 std::filesystem::remove(path);
             }
@@ -343,7 +360,7 @@ namespace path {
             return true;
         }
 
-        void copy(const std::filesystem::path& from, std::filesystem::path to, bool move, const CopyOption& op)
+        void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
         {
             if(std::filesystem::exists(from)) {
                 char ch;
@@ -352,6 +369,11 @@ namespace path {
                         throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
                     }
 
+                    if(op == CopyOption::OverwriteDirectory) {
+                        path::remove(to);
+                        std::filesystem::create_directories(to);
+                    } 
+                    
                     if(!from.filename().empty()) {
                         to /= from.filename();
                         std::filesystem::create_directories(to);
@@ -376,9 +398,21 @@ namespace path {
                         } 
                     }
                 } else {
-                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / path::filename(from) : to;
+                    if(from.filename().empty()) {
+                        from = from.parent_path();
+                    }
+
                     bool is_source_dir = std::filesystem::is_directory(from);
+                    bool is_destination_dir = std::filesystem::is_directory(to);
+
+                    if(is_destination_dir && op == CopyOption::OverwriteDirectory) {
+                        path::remove(to);
+                        std::filesystem::create_directories(to);
+                    } 
+
+                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / path::filename(from) : to;
                     bool destination_exists = std::filesystem::exists(copy_to);
+
                     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
                         ch = _private::copyWarning(copy_to.filename());
                     }

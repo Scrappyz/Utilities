@@ -93,3 +93,36 @@ Debug/
     +-- temp.txt
     +-- test.txt
 ```
+
+### Example 3
+```
+#include <iostream>
+#include "path.hpp"
+
+using namespace std;
+
+int main()
+{
+    // will overwrite the whole "temp" directory with the contents of "sandbox"
+    path::move("sandbox", "temp", path::CopyOption::OverwriteDirectory);
+    
+    return 0;
+}
+```
+Before running code:
+```
+Debug/
++-- sandbox/
+|   +-- sand1.txt
+|   +-- sand2.txt
++-- temp/
+    +-- temp.txt
+```
+After running code:
+```
+Debug/
++-- temp/
+    +-- sandbox/
+        +-- sand1.txt
+        +-- sand2.txt
+```
