@@ -2,20 +2,20 @@
 The Path library aims to simplify and improve the process of performing operations on file systems with the `<filesystem>` library.
 
 ## Minimum C++ Version
-- [`C++17`](https://en.cppreference.com/w/cpp/17)
+- [\C++17](https://en.cppreference.com/w/cpp/17)
 
 ## Includes
-- [`<iostream>`](https://en.cppreference.com/w/cpp/io/basic_iostream)
-- [`<vector>`](https://en.cppreference.com/w/cpp/container/vector)
-- [`<fstream>`](https://en.cppreference.com/w/cpp/io/basic_fstream)
-- [`<filesystem>`](https://en.cppreference.com/w/cpp/filesystem)
+- [\<iostream>](https://en.cppreference.com/w/cpp/io/basic_iostream)
+- [\<vector>](https://en.cppreference.com/w/cpp/container/vector)
+- [\<fstream>](https://en.cppreference.com/w/cpp/io/basic_fstream)
+- [\<filesystem>](https://en.cppreference.com/w/cpp/filesystem)
 ### Windows
-- [`<windows.h>`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/)
+- [\<windows.h>](https://learn.microsoft.com/en-us/windows/win32/api/winbase/)
 ### Linux
-- [`<unistd.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xsh/unistd.h.html)
-- [`<sys/stat.h>`](https://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html)
+- [\<unistd.h>](https://pubs.opengroup.org/onlinepubs/7908799/xsh/unistd.h.html)
+- [\<sys/stat.h>](https://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html)
 ### MacOS
-- [`<mach-o/dyld.h>`](https://opensource.apple.com/source/dyld/dyld-433.5/include/mach-o/dyld.h.auto.html)
+- [\<mach-o/dyld.h>](https://opensource.apple.com/source/dyld/dyld-433.5/include/mach-o/dyld.h.auto.html)
 
 ## Enums
 Defined in header `path.hpp` \
