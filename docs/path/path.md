@@ -47,22 +47,6 @@ Defined in namespace `path`
 | [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
 | [isRelative](Functions/isRelative.md) | checks if the given path is a relative path |
 | [isValidFilenameChar](Functions/isValidFilenameChar.md) | checks if the given character is valid for filenames |
-<<<<<<< HEAD
-| [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
-| [fileExtension](Functions/fileExtension.md) | returns the file extension of a given path or filename |
-| [hasFileExtension](Functions/hasFileExtension.md) | checks if a given path or filename has an extension |
-| [isDirectory](Functions/isDirectory.md) | checks if a given path is a directory |
-| [isFile](Functions/isFile.md) | checks if a given path is a file |
-| [filename](Functions/filename.md) | returns the filename of a given path |
-| [fileSize](Functions/fileSize.md) | returns the file size of a given path |
-| [directorySeparator](Functions/directorySeparator.md) | returns a directory separator character |
-| [absolute](Functions/absolute.md) | returns the absolute path of a given relative path |
-| [relative](Functions/relative.md) | returns a path relative to another path |
-| [currentPath](Functions/currentPath.md) | returns the absolute path you are currently in |
-| [sourcePath](Functions/sourcePath.md) | returns the absolute path to the executable |
-| [rootName](Functions/rootName.md) | returns the name of the root |
-=======
->>>>>>> C++-dev
 | [joinPath](Functions/joinPath.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
 | [relative](Functions/relative.md) | returns a path relative to another path |
