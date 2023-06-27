@@ -8,6 +8,8 @@ Defined in header `path.hpp`
 | Megabyte | returns the size in megabytes |
 | Gigabyte | returns the size in gigabytes |
 
+Specifies what unit of measurement to use in file sizes.
+
 ## Example 
 ```
 #include <iostream>

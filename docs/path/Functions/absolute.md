@@ -29,3 +29,8 @@ Output:
 ```
 D:\Documents\Codes\VS Code\C++\Utility\bin\Debug\foo\bar
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |

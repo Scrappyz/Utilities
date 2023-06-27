@@ -46,3 +46,9 @@ a\b\
 a\b\e\f\g\h
 a\b\e\f\g\h\
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |
+| [std::vector](https://en.cppreference.com/w/cpp/container/vector) | a sequence container that encapsulates dynamic size arrays |

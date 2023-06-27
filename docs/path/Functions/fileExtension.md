@@ -41,3 +41,8 @@ Output:
 ""
 "cpp"
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |

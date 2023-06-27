@@ -6,6 +6,8 @@ Defined in header `path.hpp`
 | NonRecursive | will not traverse subdirectories (default) |
 | Recursive | will traverse subdirectories |
 
+Specifies what type of filesystem traversal to use.
+
 ## Example
 ```
 #include <iostream>

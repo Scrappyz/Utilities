@@ -36,3 +36,9 @@ Output:
 3.23399 MB
 0.0031582 GB
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |
+| [SizeMetric](../Enums/SizeMetric.md) | specifies what unit of measurement to use in file sizes |

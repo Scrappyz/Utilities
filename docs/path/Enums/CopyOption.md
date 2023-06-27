@@ -1,12 +1,14 @@
 ## path::CopyOption
 Defined in header `path.hpp`
 
-| Members | Description
+| Members | Description |
 | --- | --- |
 | None | prompts the user what to do if a file already exists (default) |
 | SkipExisting | skips all existing files |
 | OverwriteExisting | overwrites all existing files |
 | OverwriteDirectory | deletes all the contents in the destination directory before copying the source |
+
+Specifies the type of copy operation to use.
 
 ## Example
 ```

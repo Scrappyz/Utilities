@@ -30,3 +30,8 @@ Output:
 1
 0
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |

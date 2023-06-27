@@ -91,3 +91,9 @@ EMPTY
 "D:\Documents\Codes\VS Code\C++\Utility\bin\Debug\temp\sub1\sub2test.txt"
 "D:\Documents\Codes\VS Code\C++\Utility\bin\Debug\temp\sub2test.txt"
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |
+| [Traversal](../Enums/Traversal.md) | specifies what type of filesystem traversal to use |

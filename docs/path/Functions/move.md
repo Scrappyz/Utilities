@@ -126,3 +126,9 @@ Debug/
         +-- sand1.txt
         +-- sand2.txt
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |
+| [CopyOption](../Enums/CopyOption.md) | specifies the type of copy operation to use |

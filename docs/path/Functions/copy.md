@@ -8,7 +8,7 @@ Defined in header `path.hpp`
 ## Parameters
 `from` - the source file/directory to copy \
 `to` - the destination file/directory to copy to \
-`op` - option what to do with existing files (see [CopyOption](../Enums/CopyOption.md))
+`op` - option what to do with existing files
 
 ## Notes
 - If there is a directory separator at the end of the `from` path, it will only copy the contents of the source directory.
@@ -139,3 +139,9 @@ Debug/
     +-- sand1.txt
     +-- sand2.txt
 ```
+
+## References
+| | |
+| --- | --- |
+| [std::filesystem::path](https://en.cppreference.com/w/cpp/filesystem/path) | represents a path |
+| [CopyOption](../Enums/CopyOption.md) | specifies the type of copy operation to use |
