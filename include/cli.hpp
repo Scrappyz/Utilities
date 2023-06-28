@@ -1,11 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <string>
 #include <vector>
 #include <unordered_map>
-#include <initializer_list>
-#include <exception>
 
 class CLIException : std::exception {
     private:
@@ -60,10 +57,18 @@ class CLI {
             if(subcommands.at(active_subcommand).empty()) {
                 return;
             }
-            if(start <= -1) {
+            if(start < 0) {
                 start = active_subcommand_end_pos + 1;
             }
-            for(int i = start; i < args.size(); i++) {
+
+            // valid flags: {"-h", "--help", "-vsc", "-m"}
+            // args: {"MyProgram", "-hmvsc", "stuff"}
+            // active flags: {{"-h", 1}, {"-m", 1}, {"-vsc", 1}}
+            for(int i = start; i < args.size(); i++) { 
+                std::string flag;
+                if(isFlagFormat(args[i])) {
+                    
+                }
                 if(isValidFlag(args[i])) {
                     if(!isFlagSet(args[i])) {
                         subcommands.at(subcmd)[args[i]] = i;
@@ -91,7 +96,7 @@ class CLI {
             max_subcommand_chain_count = 0;
         }
 
-        std::string removeTrailingWhitespace(const std::string& str)
+        std::string trim(const std::string& str)
         {
             std::string trimmed;
             trimmed.reserve(str.size());
@@ -118,7 +123,7 @@ class CLI {
 
         bool isFlagPrefix(char ch) const
         {
-            return ch == '-' || ch == '/' || ch == '\\';
+            return ch == '-';
         }
 
         bool isFlagFormat(const std::string& str) const
@@ -240,7 +245,7 @@ class CLI {
         {
             clearSubcommands(); // clear old subcommands
             for(int i = 0; i < valid_subs.size(); i++) {
-                std::string temp = removeTrailingWhitespace(valid_subs[i]);
+                std::string temp = trim(valid_subs[i]);
                 if(temp.empty() || isValidSubcommand(temp)) {
                     continue;
                 }
@@ -274,7 +279,7 @@ class CLI {
                 
             subcommands.at(subcmd).clear(); // clear the old flags of the given subcommand
             for(int i = 0; i < valid_flags.size(); i++) {
-                std::string flag = removeTrailingWhitespace(valid_flags[i]);
+                std::string flag = trim(valid_flags[i]);
                 if(flag.size() < 2) {
                     continue;
                 } else if(!isFlagFormat(flag)) {

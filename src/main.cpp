@@ -1,11 +1,11 @@
 #include <iostream>
-#include "path.hpp"
+#include "cli.hpp"
 
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-    path::move("sandbox", "temp", path::CopyOption::OverwriteDirectory);
+    
     
     return 0;
 }

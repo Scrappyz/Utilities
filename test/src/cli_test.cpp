@@ -4,7 +4,7 @@
 
 using namespace std;
 
-TEST(CLI, setArguments)
+TEST(setArguments, testAll)
 {
     CLI cli;
     cli.setArguments({"MyProgram", "remote", "add", "origin", "-h", "-o"});
@@ -54,7 +54,7 @@ TEST(CLI, setArguments)
     EXPECT_EQ(cli.isFlagSet("--help"), true);
 }
 
-TEST(CLI, setValidSubcommands)
+TEST(setValidSubcommands, testing)
 {
     CLI cli({"MyProgram", "remote", "add", "--origin"});
     cli.setValidSubcommands({"pull", "push", "remote add"});
@@ -75,7 +75,7 @@ TEST(CLI, setValidSubcommands)
     EXPECT_EQ(cmd.getValidSubcommands(), expected_sub);
 }
 
-TEST(CLI, setValidFlags)
+TEST(setValidFlags, testing)
 {
     CLI cli;
     unordered_map<string, unordered_map<string,int>> expected_sub;
@@ -98,7 +98,7 @@ TEST(CLI, setValidFlags)
     EXPECT_EQ(cli.isFlagSet("-f"), false);
 }
 
-TEST(CLI, checkers)
+TEST(checkers, testing)
 {
     CLI cli;
     cli.setArguments({"MyProgram", "home", "-g"});
@@ -146,7 +146,7 @@ TEST(CLI, checkers)
     EXPECT_THROW(cli.getFlagPosition("-g"), CLIException);
 }
 
-TEST(CLI, production)
+TEST(production, testing)
 {
     CLI cli({"MyProgram", "remote", "-h"});
     unordered_map<string, unordered_map<string, int>> expected_subs;
