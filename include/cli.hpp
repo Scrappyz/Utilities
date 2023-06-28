@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 class CLIException : std::exception {
     private:
@@ -43,12 +44,12 @@ class CLI {
             }
             std::string temp;
             for(int i = start; i <= chain_end_pos; i++) {
-                temp += args[i];   
+                temp.append(args[i]);   
                 if(isValidSubcommand(temp)) {
                     active_subcommand = temp;
                     active_subcommand_end_pos = i;
                 }
-                temp += " ";
+                temp.push_back(' ');
             }
         }
 
@@ -61,19 +62,33 @@ class CLI {
                 start = active_subcommand_end_pos + 1;
             }
 
-            // valid flags: {"-h", "--help", "-vsc", "-m"}
-            // args: {"MyProgram", "-hmvsc", "stuff"}
-            // active flags: {{"-h", 1}, {"-m", 1}, {"-vsc", 1}}
+            // valid flags: {"-h", "--help", "-v", "-m", "--helpme"}
+            // args: {"MyProgram", "-hmv", "--helpme" "stuff"}
+            // active flags: {{"-h", 1}, {"--help", -1}, {"-m", 1}, {"-v", 1}, {"--helpme", 2}}
             for(int i = start; i < args.size(); i++) { 
                 std::string flag;
                 if(isFlagFormat(args[i])) {
-                    
-                }
-                if(isValidFlag(args[i])) {
-                    if(!isFlagSet(args[i])) {
-                        subcommands.at(subcmd)[args[i]] = i;
-                    } else {
-                        throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + args[i] + "\""); 
+                    std::string temp = args[i];
+                    int j = 0;
+                    while(j < temp.size() && isFlagPrefix(temp[j])) {
+                        flag.push_back(temp[j]);
+                        j++;
+                    }
+
+                    bool is_flag_word = (args[i][0] == '-' && args[i][1] == '-');
+                    while(j < temp.size()) {
+                        flag.push_back(temp[j]);
+                        if(!isFlagPrefix(temp[j]) && isValidFlag(flag)) {
+                            if(!isFlagSet(flag)) {
+                                subcommands.at(subcmd)[flag] = i;
+                                if(!is_flag_word) {
+                                    flag.pop_back();
+                                }
+                            } else {
+                                throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + flag + "\""); 
+                            }
+                        }
+                        j++;
                     }
                 }
             }
@@ -126,25 +141,25 @@ class CLI {
             return ch == '-';
         }
 
-        bool isFlagFormat(const std::string& str) const
+        bool isFlagFormat(const std::string& flag) const
         {
-            return str.size() > 1 ? isFlagPrefix(str[0]) : false;
-        }
+            return flag.size() > 1 ? isFlagPrefix(flag[0]) : false;
+        } 
 
     public:
         CLI() : args(), subcommands(), active_subcommand(), active_subcommand_end_pos(), max_subcommand_chain_count()
         {
             subcommands.insert({"", std::unordered_map<std::string, int>()}); // for when no active_subcommand is provided
         }
-        CLI(int argc, char** argv) : args(), subcommands(), active_subcommand(), active_subcommand_end_pos(), max_subcommand_chain_count()
+
+        CLI(int argc, char** argv) 
+        : args(), subcommands(), active_subcommand(), active_subcommand_end_pos(), max_subcommand_chain_count()
         {
             setArguments(argc, argv);
         }
-        CLI(const std::vector<std::string>& args) : args(), subcommands(), active_subcommand(), active_subcommand_end_pos(), max_subcommand_chain_count()
-        {
-            setArguments(args);
-        }
-        CLI(const std::initializer_list<std::string>& args) : args(), subcommands(), active_subcommand(), active_subcommand_end_pos(), max_subcommand_chain_count()
+
+        CLI(const std::vector<std::string>& args) 
+        : args(), subcommands(), active_subcommand(), active_subcommand_end_pos(), max_subcommand_chain_count()
         {
             setArguments(args);
         }

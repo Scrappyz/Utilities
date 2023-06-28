@@ -98,6 +98,31 @@ TEST(setValidFlags, testing)
     EXPECT_EQ(cli.isFlagSet("-f"), false);
 }
 
+TEST(setValidFlags, multiple_single_flags)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "-hmv", "--help" "stuff"});
+    cli.setValidSubcommands({});
+    cli.setValidFlags({"-h", "--help", "-m", "-v", "--help"});
+    EXPECT_EQ(cli.getFlagPosition("-h"), 1);
+    EXPECT_EQ(cli.getFlagPosition("-m"), 1);
+    EXPECT_EQ(cli.getFlagPosition("-v"), 1);
+    EXPECT_EQ(cli.getFlagPosition("--help"), 2);
+}
+
+TEST(setValidFlags, substring_in_another_flag)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "-hmv", "--helpme" "stuff"});
+    cli.setValidSubcommands({});
+    cli.setValidFlags({"-h", "--help", "-m", "-v", "--helpme"});
+    EXPECT_EQ(cli.getFlagPosition("-h"), 1);
+    EXPECT_EQ(cli.getFlagPosition("-m"), 1);
+    EXPECT_EQ(cli.getFlagPosition("-v"), 1);
+    EXPECT_EQ(cli.getFlagPosition("--help"), -1);
+    EXPECT_EQ(cli.getFlagPosition("--helpme"), 2);
+}
+
 TEST(checkers, testing)
 {
     CLI cli;
