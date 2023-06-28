@@ -80,7 +80,7 @@ namespace path {
         std::string result;
         if(i >= 1 && i < temp.size()-1 && temp[i] == '.' && isValidFilenameChar(temp[i-1])) {
             for(int j = i+1; j < temp.size() && isValidFilenameChar(temp[j]); j++) {
-                result += temp[j];
+                result.push_back(temp[j]);
             }
         }
         return result;
@@ -182,7 +182,7 @@ namespace path {
             result = std::filesystem::weakly_canonical(p1).string();
             bool exist = std::filesystem::exists(result);
             if(exist && p1.filename().empty()) {
-                result += directorySeparator();
+                result.push_back(directorySeparator());
             } else if(!exist && (p1.filename() == "." || p1.filename() == "..")) {
                 result.pop_back();
             }
@@ -192,7 +192,7 @@ namespace path {
         result = std::filesystem::weakly_canonical(p1 / p2).string();
         bool exist = std::filesystem::exists(result);
         if(exist && p2.filename().empty()) {
-            result += directorySeparator();
+            result.push_back(directorySeparator());
         } else if(!exist && (p2.filename() == "." || p2.filename() == "..")) {
             result.pop_back();
         }
