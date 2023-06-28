@@ -14,7 +14,7 @@
 
 namespace path {
     
-    enum class CopyOption {None, SkipExisting, OverwriteExisting, OverwriteDirectory};
+    enum class CopyOption {None, SkipExisting, OverwriteExisting, OverwriteAll};
     enum class Traversal {NonRecursive, Recursive};
     enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
@@ -371,7 +371,7 @@ namespace path {
                         throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
                     }
 
-                    if(op == CopyOption::OverwriteDirectory) {
+                    if(op == CopyOption::OverwriteAll) {
                         path::remove(to);
                         std::filesystem::create_directories(to);
                     } 
@@ -407,7 +407,7 @@ namespace path {
                     bool is_source_dir = std::filesystem::is_directory(from);
                     bool is_destination_dir = std::filesystem::is_directory(to);
 
-                    if(is_destination_dir && op == CopyOption::OverwriteDirectory) {
+                    if(is_destination_dir && op == CopyOption::OverwriteAll) {
                         path::remove(to);
                         std::filesystem::create_directories(to);
                     } 

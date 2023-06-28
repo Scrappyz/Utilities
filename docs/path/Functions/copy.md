@@ -113,7 +113,7 @@ using namespace std;
 int main()
 {
     // will overwrite the whole "temp" directory with the contents of "sandbox"
-    path::copy("sandbox/", "temp", path::CopyOption::OverwriteDirectory); // "sandbox" has end separator
+    path::copy("sandbox/", "temp", path::CopyOption::OverwriteAll); // "sandbox" has end separator
 
     return 0;
 }

@@ -104,7 +104,7 @@ using namespace std;
 int main()
 {
     // will overwrite the whole "temp" directory with the contents of "sandbox"
-    path::move("sandbox", "temp", path::CopyOption::OverwriteDirectory);
+    path::move("sandbox", "temp", path::CopyOption::OverwriteAll);
     
     return 0;
 }
