@@ -174,7 +174,7 @@ namespace path {
         return path.root_name().string();
     }
 
-    std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
+    std::string join(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
         std::string result;
         
@@ -199,19 +199,19 @@ namespace path {
         return result;
     }
 
-    std::string joinPath(const std::vector<std::filesystem::path>& paths)
+    std::string join(const std::vector<std::filesystem::path>& paths)
     {
         if(paths.empty()) {
             return std::string();
         } else if(paths.size() < 2) {
-            return joinPath(paths[0], "");
+            return join(paths[0], "");
         }
 
         std::filesystem::path result = paths[0];
         for(int i = 1; i < paths.size()-1; i++) {
             result /= paths[i];
         }
-        return joinPath(result, paths.back());
+        return join(result, paths.back());
     }
 
     void create(const std::filesystem::path& path, const std::string& data = "")

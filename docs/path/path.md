@@ -49,7 +49,7 @@ Defined in namespace `path`
 | [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
 | [isRelative](Functions/isRelative.md) | checks if the given path is a relative path |
 | [isValidFilenameChar](Functions/isValidFilenameChar.md) | checks if the given character is valid for filenames |
-| [joinPath](Functions/joinPath.md) | concatenates two or more paths together |
+| [join](Functions/join.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
 | [relative](Functions/relative.md) | returns a path relative to another path |
 | [rename](Functions/rename.md) | renames a file or directory |
