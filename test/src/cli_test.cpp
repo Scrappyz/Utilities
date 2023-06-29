@@ -131,6 +131,34 @@ TEST(setValidFlags, substring_in_another_flag)
     EXPECT_EQ(cli.getFlagPosition("--helpme"), 1);
 }
 
+TEST(setValidFlags, duplicate_flags_initialization)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "--help", "-h", "stuff"});
+    cli.setValidFlags({"-h", "--help", "-h", "--help"});
+    unordered_map<string, int> expected_flags = {{"-h", 2}, {"--help", 1}};
+    EXPECT_EQ(cli.getFlags(), expected_flags);
+}
+
+TEST(setValidFlags, flags_with_invalid_prefix)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "--help", "-h", "stuff"});
+    EXPECT_THROW(cli.setValidFlags({"--help", "/h"}), CLIException);
+    EXPECT_THROW(cli.setValidFlags({"---help"}), CLIException);
+    EXPECT_THROW(cli.setValidFlags({"money"}), CLIException);
+}
+
+TEST(setValidFlags, invalid_flags)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "--help", "-h", "stuff"});
+    EXPECT_THROW(cli.setValidFlags({""}), CLIException);
+    EXPECT_THROW(cli.setValidFlags({"-"}), CLIException);
+    EXPECT_THROW(cli.setValidFlags({"--"}), CLIException);
+    EXPECT_THROW(cli.setValidFlags({"---"}), CLIException);
+}
+
 TEST(checkers, testing)
 {
     CLI cli;

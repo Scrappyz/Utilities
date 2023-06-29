@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
 
 class CLIException : std::exception {
     private:
@@ -58,13 +57,11 @@ class CLI {
             if(subcommands.at(active_subcommand).empty()) {
                 return;
             }
+
             if(start < 0) {
                 start = active_subcommand_end_pos + 1;
             }
 
-            // valid flags: {"-h", "--help", "-v", "-m", "--helpme"}
-            // args: {"MyProgram", "-hmv", "--helpme" "stuff"}
-            // active flags: {{"-h", 1}, {"--help", -1}, {"-m", 1}, {"-v", 1}, {"--helpme", 2}}
             for(int i = start; i < args.size(); i++) { 
                 if(isFlagFormat(args[i])) {
                     bool is_flag_word = (args[i][0] == '-' && args[i][1] == '-');
@@ -150,7 +147,14 @@ class CLI {
 
         bool isFlagFormat(const std::string& flag) const
         {
-            return flag.size() > 1 ? isFlagPrefix(flag[0]) : false;
+            std::string temp;
+            for(int i = 0; flag[i] == '-'; i++) {
+                temp.push_back(flag[i]);
+            }
+            if(temp.empty() || temp.size() > 2 || temp.size() == flag.size()) {
+                return false;
+            }
+            return true;
         } 
 
     public:
@@ -268,6 +272,7 @@ class CLI {
             clearSubcommands(); // clear old subcommands
             for(int i = 0; i < valid_subs.size(); i++) {
                 std::string temp = trim(valid_subs[i]);
+
                 if(temp.empty() || isValidSubcommand(temp)) {
                     continue;
                 }
@@ -278,11 +283,14 @@ class CLI {
                         max_word_count++;
                     }
                 }
+
                 if(max_word_count > max_subcommand_chain_count) {
                     max_subcommand_chain_count = max_word_count;
                 }
+
                 subcommands.insert({temp, std::unordered_map<std::string, int>()});
             }
+
             if(!args.empty()) { // reset the new active subcommand
                 setActiveSubcommand();
             }
@@ -302,14 +310,18 @@ class CLI {
             subcommands.at(subcmd).clear(); // clear the old flags of the given subcommand
             for(int i = 0; i < valid_flags.size(); i++) {
                 std::string flag = trim(valid_flags[i]);
+
                 if(flag.size() < 2) {
-                    continue;
+                    subcommands.at(subcmd).clear();
+                    throw CLIException("[Error][" + std::string(__func__) + "] \"" + flag + "\" is not a valid flag");
                 } else if(!isFlagFormat(flag)) {
                     subcommands.at(subcmd).clear();
                     throw CLIException("[Error][" + std::string(__func__) + "] \"" + flag + "\" does not have a proper prefix");
                 }
+
                 subcommands.at(subcmd).insert({flag, -1});
             }
+            
             if(subcmd == active_subcommand) { // set the flags only if the given subcommand is equal to the active subcommand
                 setFlags(subcmd);
             }
