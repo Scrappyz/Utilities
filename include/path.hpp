@@ -149,31 +149,6 @@ namespace path {
         return std::filesystem::relative(path, base_path).string();
     }
 
-    std::string currentPath() 
-    {
-        return std::filesystem::current_path().string();
-    }
-
-    std::string sourcePath() 
-    {
-        std::filesystem::path source_path;
-        #if defined(_WIN32)
-            char path[MAX_PATH];
-            GetModuleFileName(NULL, path, MAX_PATH);
-            source_path = path;
-        #elif defined(__linux__) || defined(__apple__)
-            source_path = filesystem::canonical("/proc/self/exe");
-        #else
-            throw std::runtime_error("[Error][sourcePath] Unknown Operating System");
-        #endif
-        return source_path.parent_path().string();
-    }
-
-    std::string rootName(const std::filesystem::path& path)
-    {
-        return path.root_name().string();
-    }
-
     std::string join(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
         std::string result;
@@ -212,6 +187,31 @@ namespace path {
             result /= paths[i];
         }
         return join(result, paths.back());
+    }
+
+    std::string currentPath() 
+    {
+        return std::filesystem::current_path().string();
+    }
+
+    std::string sourcePath() 
+    {
+        std::filesystem::path source_path;
+        #if defined(_WIN32)
+            char path[MAX_PATH];
+            GetModuleFileName(NULL, path, MAX_PATH);
+            source_path = path;
+        #elif defined(__linux__) || defined(__apple__)
+            source_path = filesystem::canonical("/proc/self/exe");
+        #else
+            throw std::runtime_error("[Error][sourcePath] Unknown Operating System");
+        #endif
+        return source_path.parent_path().string();
+    }
+
+    std::string rootName(const std::filesystem::path& path)
+    {
+        return path.root_name().string();
     }
 
     void create(const std::filesystem::path& path, const std::string& data = "")
