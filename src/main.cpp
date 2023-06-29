@@ -1,4 +1,5 @@
 #include <iostream>
+#include "path.hpp"
 #include "cli.hpp"
 
 using namespace std;
@@ -20,6 +21,7 @@ int main(int argc, char* argv[])
     } catch(const CLIException& e) {
         cout << e.what() << endl;
     }
+    cout << path::sourcePath() << endl;
     
     return 0;
 }

@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #if defined(_WIN32)
-    #include <windows.h>
+    #include <libloaderapi.h>
 #elif defined(__linux__)
     #include <unistd.h>
     #include <sys/stat.h>

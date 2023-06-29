@@ -10,7 +10,7 @@ The Path library aims to simplify and improve the process of performing operatio
 - [\<fstream>](https://en.cppreference.com/w/cpp/io/basic_fstream)
 - [\<filesystem>](https://en.cppreference.com/w/cpp/filesystem)
 ### Windows
-- [\<windows.h>](https://learn.microsoft.com/en-us/windows/win32/api/winbase/)
+- [\<libloaderapi.h>](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea)
 ### Linux
 - [\<unistd.h>](https://pubs.opengroup.org/onlinepubs/7908799/xsh/unistd.h.html)
 - [\<sys/stat.h>](https://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html)
