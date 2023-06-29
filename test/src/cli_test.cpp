@@ -8,7 +8,7 @@ TEST(setArguments, testAll)
 {
     CLI cli;
     cli.setArguments({"MyProgram", "remote", "add", "origin", "-h", "-o"});
-    unordered_map<string, unordered_map<string,int>> expected_sub = {{"", unordered_map<string,int>()}};
+    unordered_set<string> expected_sub = {""};
     EXPECT_EQ(cli.getValidSubcommands(), expected_sub);
     EXPECT_EQ(cli.getActiveSubcommand(), "");
     EXPECT_EQ(cli.getMaxSubcommandChainCount(), 0);
@@ -64,21 +64,20 @@ TEST(setValidSubcommands, testing)
     EXPECT_EQ(cli.getMaxSubcommandChainCount(), 0);
 
     cli.setValidSubcommands({"", "  hello", "   hi   ", "boi   "});
-    unordered_map<string, unordered_map<string, int>> expected_subcmd = {{"", unordered_map<string, int>()}, {"hello", unordered_map<string, int>()},
-    {"hi", unordered_map<string, int>()}, {"boi", unordered_map<string, int>()}};
+    unordered_set<string> expected_subcmd = {"", "hello", "hi", "boi"};
     EXPECT_EQ(cli.getMaxSubcommandChainCount(), 1);
     EXPECT_EQ(cli.getValidSubcommands(), expected_subcmd);
 
     CLI cmd({"MyProgram"});
-    unordered_map<string, unordered_map<string, int>> expected_sub = {{"", unordered_map<string, int>()}};
+    expected_subcmd = {""};
     cmd.setValidSubcommands({});
-    EXPECT_EQ(cmd.getValidSubcommands(), expected_sub);
+    EXPECT_EQ(cmd.getValidSubcommands(), expected_subcmd);
 }
 
 TEST(setValidFlags, testing)
 {
     CLI cli;
-    unordered_map<string, unordered_map<string,int>> expected_sub;
+    unordered_set<string> expected_sub;
     cli.setArguments({"MyProgram", "push", "-f", "all"});
     cli.setValidSubcommands({"push"});
     cli.setValidFlags("push", {"-f"});
@@ -86,7 +85,7 @@ TEST(setValidFlags, testing)
     EXPECT_EQ(cli.isFlagSet("-f"), true);
 
     cli.setValidSubcommands({"pull", "pull jim hoe"});
-    expected_sub = {{"pull", unordered_map<string,int>()}, {"", unordered_map<string,int>()}, {"pull jim hoe", unordered_map<string,int>()}};
+    expected_sub = {"pull", "pull jim hoe", ""};
     EXPECT_EQ(cli.getValidSubcommands(), expected_sub);
     EXPECT_THROW(cli.setValidFlags("push", {"-f"}), CLIException);
     EXPECT_EQ(cli.getActiveSubcommand(), "");
@@ -157,6 +156,20 @@ TEST(setValidFlags, invalid_flags)
     EXPECT_THROW(cli.setValidFlags({"-"}), CLIException);
     EXPECT_THROW(cli.setValidFlags({"--"}), CLIException);
     EXPECT_THROW(cli.setValidFlags({"---"}), CLIException);
+}
+
+TEST(initialization, order)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "remote", "add", "-h", "val1", "--output", "val2"});
+    cli.setValidSubcommands({"remote", "remote add"});
+    cli.setValidFlags("remote add", {"-h", "--output", "-o"});
+    unordered_set<string> expected_subs = {"remote", "remote add", ""};
+    unordered_map<string, int> expected_flags = {{"-h", 3}, {"--output", 5}, {"-o", -1}};
+    EXPECT_EQ(cli.getActiveSubcommand(), "remote add");
+    EXPECT_EQ(cli.getActiveSubcommandEndPosition(), 2);
+    EXPECT_EQ(cli.getValidSubcommands(), expected_subs);
+    EXPECT_EQ(cli.getFlags("remote add"), expected_flags);
 }
 
 TEST(checkers, testing)

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 class CLIException : std::exception {
     private:
@@ -181,29 +182,38 @@ class CLI {
             return args;
         }
 
-        const std::unordered_map<std::string, std::unordered_map<std::string, int>>& getValidSubcommands() const 
+        const std::unordered_map<std::string, std::unordered_map<std::string, int>>& getValidSubcommandsAndFlags() const
         {
             return subcommands;
         }
 
-        const std::string& getActiveSubcommand()
+        std::unordered_set<std::string> getValidSubcommands() const
         {
-            return active_subcommand;
-        }
-
-        int getActiveSubcommandEndPosition()
-        {
-            return active_subcommand_end_pos;
-        }
-
-        int getMaxSubcommandChainCount()
-        {
-            return max_subcommand_chain_count;
+            std::unordered_set<std::string> valid_subcommands;
+            for(const auto& i : subcommands) {
+                valid_subcommands.insert(i.first);
+            }
+            return valid_subcommands;
         }
 
         std::unordered_map<std::string, int> getFlags(const std::string& subcmd = "") const
         {
             return isValidSubcommand(subcmd) ? subcommands.at(subcmd) : throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
+        }
+
+        const std::string& getActiveSubcommand() const
+        {
+            return active_subcommand;
+        }
+
+        int getActiveSubcommandEndPosition() const
+        {
+            return active_subcommand_end_pos;
+        }
+
+        int getMaxSubcommandChainCount() const
+        {
+            return max_subcommand_chain_count;
         }
 
         const std::string& getArgument(int index) const
