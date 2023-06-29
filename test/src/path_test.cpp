@@ -57,61 +57,61 @@ TEST(fileExtension, getExtension)
     EXPECT_EQ(fileExtension("foo/bar/file."), "");
 }
 
-TEST(joinPath, edge_case)
+TEST(join, edge_case)
 {
-    EXPECT_EQ(joinPath("", ""), "");
-    EXPECT_EQ(joinPath("a/b/c", ""), "a\\b\\c");
-    EXPECT_EQ(joinPath("a/b/c/", ""), "a\\b\\c\\");
-    EXPECT_EQ(joinPath("", "a/b/c"), "a\\b\\c");
-    EXPECT_EQ(joinPath("", "a/b/c/"), "a\\b\\c\\");
+    EXPECT_EQ(join("", ""), "");
+    EXPECT_EQ(join("a/b/c", ""), "a\\b\\c");
+    EXPECT_EQ(join("a/b/c/", ""), "a\\b\\c\\");
+    EXPECT_EQ(join("", "a/b/c"), "a\\b\\c");
+    EXPECT_EQ(join("", "a/b/c/"), "a\\b\\c\\");
 }
 
-TEST(joinPath, concatenate)
+TEST(join, concatenate)
 {
-    EXPECT_EQ(joinPath("a/b/c", "d/e"), "a\\b\\c\\d\\e");
-    EXPECT_EQ(joinPath("a/b/c", "d/e/"), "a\\b\\c\\d\\e\\");
-    EXPECT_EQ(joinPath("a/b/c/", "d/e"), "a\\b\\c\\d\\e");
+    EXPECT_EQ(join("a/b/c", "d/e"), "a\\b\\c\\d\\e");
+    EXPECT_EQ(join("a/b/c", "d/e/"), "a\\b\\c\\d\\e\\");
+    EXPECT_EQ(join("a/b/c/", "d/e"), "a\\b\\c\\d\\e");
 }
 
-TEST(joinPath, end_separator)
+TEST(join, end_separator)
 {
-    EXPECT_EQ(joinPath("a/b/c/d", ".."), "a\\b\\c");
-    EXPECT_EQ(joinPath("a/b/c/d", "../"), "a\\b\\c\\");
-    EXPECT_EQ(joinPath("a/b/c/d", "../.."), "a\\b");
-    EXPECT_EQ(joinPath("a/b/c/d", "../../"), "a\\b\\");
-    EXPECT_EQ(joinPath("a/b/c/d", "."), "a\\b\\c\\d");
-    EXPECT_EQ(joinPath("a/b/c/d", "./"), "a\\b\\c\\d\\");
-    EXPECT_EQ(joinPath("a/b/c/d/..", ""), "a\\b\\c");
-    EXPECT_EQ(joinPath("a/b/c/d/../", ""), "a\\b\\c\\");
-    EXPECT_EQ(joinPath("a/b/c/d/../../e", ""), "a\\b\\e");
-    EXPECT_EQ(joinPath("a/b/c/d/../../e/", ""), "a\\b\\e\\");
-    EXPECT_EQ(joinPath("", "a/b/c/d/../../e"), "a\\b\\e");
-    EXPECT_EQ(joinPath("", "a/b/c/d/../../e/"), "a\\b\\e\\");
+    EXPECT_EQ(join("a/b/c/d", ".."), "a\\b\\c");
+    EXPECT_EQ(join("a/b/c/d", "../"), "a\\b\\c\\");
+    EXPECT_EQ(join("a/b/c/d", "../.."), "a\\b");
+    EXPECT_EQ(join("a/b/c/d", "../../"), "a\\b\\");
+    EXPECT_EQ(join("a/b/c/d", "."), "a\\b\\c\\d");
+    EXPECT_EQ(join("a/b/c/d", "./"), "a\\b\\c\\d\\");
+    EXPECT_EQ(join("a/b/c/d/..", ""), "a\\b\\c");
+    EXPECT_EQ(join("a/b/c/d/../", ""), "a\\b\\c\\");
+    EXPECT_EQ(join("a/b/c/d/../../e", ""), "a\\b\\e");
+    EXPECT_EQ(join("a/b/c/d/../../e/", ""), "a\\b\\e\\");
+    EXPECT_EQ(join("", "a/b/c/d/../../e"), "a\\b\\e");
+    EXPECT_EQ(join("", "a/b/c/d/../../e/"), "a\\b\\e\\");
 }
 
-TEST(joinPaths, edge_case)
+TEST(joins, edge_case)
 {
-    EXPECT_EQ(joinPath({}), "");
-    EXPECT_EQ(joinPath({"", "", "", ""}), "");
-    EXPECT_EQ(joinPath({"", "a/b", "", "c/d"}), "a\\b\\c\\d");
-    EXPECT_EQ(joinPath({"", "a/b", "", "c/d/"}), "a\\b\\c\\d\\");
+    EXPECT_EQ(join({}), "");
+    EXPECT_EQ(join({"", "", "", ""}), "");
+    EXPECT_EQ(join({"", "a/b", "", "c/d"}), "a\\b\\c\\d");
+    EXPECT_EQ(join({"", "a/b", "", "c/d/"}), "a\\b\\c\\d\\");
 }
 
-TEST(joinPaths, concatenate)
+TEST(joins, concatenate)
 {
-    EXPECT_EQ(joinPath({"a/b/c"}), "a\\b\\c");
-    EXPECT_EQ(joinPath({"a/b/c/"}), "a\\b\\c\\");
-    EXPECT_EQ(joinPath({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
-    EXPECT_EQ(joinPath({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
-    EXPECT_EQ(joinPath({"a/b/c/d", "e", "f", "g/h"}), "a\\b\\c\\d\\e\\f\\g\\h");
-    EXPECT_EQ(joinPath({"a/b/c/d", "e", "f", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
-    EXPECT_EQ(joinPath({"a/b/c/d", "e/", "f/", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
+    EXPECT_EQ(join({"a/b/c"}), "a\\b\\c");
+    EXPECT_EQ(join({"a/b/c/"}), "a\\b\\c\\");
+    EXPECT_EQ(join({"a/b/c", "d/e"}), "a\\b\\c\\d\\e");
+    EXPECT_EQ(join({"a/b/c", "d/e/"}), "a\\b\\c\\d\\e\\");
+    EXPECT_EQ(join({"a/b/c/d", "e", "f", "g/h"}), "a\\b\\c\\d\\e\\f\\g\\h");
+    EXPECT_EQ(join({"a/b/c/d", "e", "f", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
+    EXPECT_EQ(join({"a/b/c/d", "e/", "f/", "g/h/"}), "a\\b\\c\\d\\e\\f\\g\\h\\");
 }
 
-TEST(joinPaths, end_separator)
+TEST(joins, end_separator)
 {
-    EXPECT_EQ(joinPath({"a/b/c/d/../.."}), "a\\b");
-    EXPECT_EQ(joinPath({"a/b/c/d/../../"}), "a\\b\\");
-    EXPECT_EQ(joinPath({"a/b/c/d/../../", "e/f/..", "g"}), "a\\b\\e\\g");
-    EXPECT_EQ(joinPath({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
+    EXPECT_EQ(join({"a/b/c/d/../.."}), "a\\b");
+    EXPECT_EQ(join({"a/b/c/d/../../"}), "a\\b\\");
+    EXPECT_EQ(join({"a/b/c/d/../../", "e/f/..", "g"}), "a\\b\\e\\g");
+    EXPECT_EQ(join({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
 }
