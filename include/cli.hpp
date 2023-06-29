@@ -66,29 +66,36 @@ class CLI {
             // args: {"MyProgram", "-hmv", "--helpme" "stuff"}
             // active flags: {{"-h", 1}, {"--help", -1}, {"-m", 1}, {"-v", 1}, {"--helpme", 2}}
             for(int i = start; i < args.size(); i++) { 
-                std::string flag;
                 if(isFlagFormat(args[i])) {
-                    std::string temp = args[i];
-                    int j = 0;
-                    while(j < temp.size() && isFlagPrefix(temp[j])) {
-                        flag.push_back(temp[j]);
-                        j++;
-                    }
-
                     bool is_flag_word = (args[i][0] == '-' && args[i][1] == '-');
-                    while(j < temp.size()) {
-                        flag.push_back(temp[j]);
-                        if(!isFlagPrefix(temp[j]) && isValidFlag(flag)) {
-                            if(!isFlagSet(flag)) {
-                                subcommands.at(subcmd)[flag] = i;
-                                if(!is_flag_word) {
-                                    flag.pop_back();
-                                }
+                    if(is_flag_word) {
+                        if(isValidFlag(args[i])) {
+                            if(!isFlagSet(args[i])) {
+                                subcommands.at(subcmd)[args[i]] = i;
                             } else {
-                                throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + flag + "\""); 
+                                throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + args[i] + "\""); 
                             }
                         }
-                        j++;
+                    } else {
+                        std::string flag;
+                        std::string temp = args[i];
+                        int j = 0;
+                        while(j < temp.size() && isFlagPrefix(temp[j])) {
+                            flag.push_back(temp[j]);
+                            j++;
+                        }
+                        while(j < temp.size()) {
+                            flag.push_back(temp[j]);
+                            if(!isFlagPrefix(temp[j]) && isValidFlag(flag)) {
+                                if(!isFlagSet(flag)) {
+                                    subcommands.at(subcmd)[flag] = i;
+                                    flag.pop_back();
+                                } else {
+                                    throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + flag + "\""); 
+                                }
+                            }
+                            j++;
+                        }
                     }
                 }
             }
