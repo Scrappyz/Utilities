@@ -216,12 +216,25 @@ class CLI {
             return max_subcommand_chain_count;
         }
 
-        const std::string& getArgument(int index) const
+        std::string getArgumentAt(int start, int end = -1) const
         {
-            if(index < 0 || index >= args.size()) {
+            if(start < 0 || start >= args.size()) {
                 throw CLIException("[Error][" + std::string(__func__) + "] Index is out of range");
             }
-            return args[index];
+
+            if(end < 0 || end >= args.size()) {
+                return args[start];
+            } 
+
+            std::string result;
+            for(int i = start; i <= end; i++) {
+                result.append(args[i]);
+                if(i < end) {
+                    result.push_back(' ');
+                }
+            }
+
+            return result;
         }
 
         int getFlagPosition(const std::string& flag) const

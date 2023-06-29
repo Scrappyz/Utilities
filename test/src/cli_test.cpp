@@ -172,6 +172,19 @@ TEST(initialization, order)
     EXPECT_EQ(cli.getFlags("remote add"), expected_flags);
 }
 
+TEST(getArgumentAt, concatenation)
+{
+    CLI cli;
+    cli.setArguments({"MyProgram", "remote", "add", "--help", "value", "lol"});
+    EXPECT_EQ(cli.getArgumentAt(0), "MyProgram");
+    EXPECT_EQ(cli.getArgumentAt(2, 6), "add");
+    EXPECT_THROW(cli.getArgumentAt(-1, 2), CLIException);
+    EXPECT_THROW(cli.getArgumentAt(6, 2), CLIException);
+    EXPECT_EQ(cli.getArgumentAt(0, 2), "MyProgram remote add");
+    EXPECT_EQ(cli.getArgumentAt(3, 5), "--help value lol");
+    EXPECT_EQ(cli.getArgumentAt(3, 2), "");
+}
+
 TEST(checkers, testing)
 {
     CLI cli;
