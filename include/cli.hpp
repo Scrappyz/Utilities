@@ -65,23 +65,25 @@ class CLI {
 
             for(int i = start; i < args.size(); i++) { 
                 if(isFlagFormat(args[i])) {
+                    std::string flag;
+                    std::string temp = trim(args[i]);
                     bool is_flag_word = (args[i][0] == '-' && args[i][1] == '-');
+
                     if(is_flag_word) {
-                        if(isValidFlag(args[i])) {
-                            if(!isFlagSet(args[i])) {
-                                subcommands.at(subcmd)[args[i]] = i;
+                        if(isValidFlag(temp)) {
+                            if(!isFlagSet(temp)) {
+                                subcommands.at(subcmd)[temp] = i;
                             } else {
-                                throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + args[i] + "\""); 
+                                throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + temp + "\""); 
                             }
                         }
                     } else {
-                        std::string flag;
-                        std::string temp = args[i];
                         int j = 0;
                         while(j < temp.size() && isFlagPrefix(temp[j])) {
                             flag.push_back(temp[j]);
                             j++;
                         }
+
                         while(j < temp.size()) {
                             flag.push_back(temp[j]);
                             if(!isFlagPrefix(temp[j]) && isValidFlag(flag)) {
@@ -134,6 +136,8 @@ class CLI {
                     } else {
                         trimmed.push_back(' ');
                     }
+                } else if(str[i] == '=') {
+                    return trimmed;
                 }
                 trimmed.push_back(str[i]);
                 i++;
@@ -211,11 +215,6 @@ class CLI {
             return active_subcommand_end_pos;
         }
 
-        int getMaxSubcommandChainCount() const
-        {
-            return max_subcommand_chain_count;
-        }
-
         std::string getArgumentAt(int start, int end = -1) const
         {
             if(start < 0 || start >= args.size()) {
@@ -252,23 +251,42 @@ class CLI {
             return subcommands.at(subcmd).at(flag);
         }
 
-        std::string getFlagValue(const std::string& flag) const
+        std::vector<std::string> getValueOf(const std::string& str, int limit = -1)
         {
-            return getFlagValue(active_subcommand, flag);
-        }
+            std::vector<std::string> values;
+            if(limit == 0) {
+                return values;
+            }
 
-        std::string getFlagValue(const std::string& subcmd, const std::string& flag) const
-        {
-            if(!isValidSubcommand(subcmd)) {
-                throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
-            } else if(subcommands.at(subcmd).count(flag) < 1) {
-                throw CLIException("[Error][" + std::string(__func__) + "] \"" + flag + "\" is not a valid flag");
+            if(isValidFlag(str)) {
+                int flag_pos = getFlagPosition(str);
+                if(flag_pos < 0) {
+                    throw CLIException("[Error][getValuesOf] Flag \"" + str + "\" is not set");
+                }
+
+                std::string temp = getArgumentAt(flag_pos);
+                int equal = temp.find_first_of("=");
+                if(equal != std::string::npos) {
+                    values.push_back(temp.substr(equal + 1, temp.size() - equal));
+                } 
+                
+                for(int i = flag_pos + 1; i < args.size(); i++) {
+                    if(isFlagFormat(args[i]) || limit > 0 && values.size() >= limit) {
+                        break;
+                    }
+                    values.push_back(args[i]);
+                }
+            } else if(str == active_subcommand) {
+                for(int i = active_subcommand_end_pos + 1; i < args.size(); i++) {
+                    if(isFlagFormat(args[i]) || limit > 0 && values.size() >= limit) {
+                        break;
+                    }
+                    values.push_back(args[i]);
+                }
+            } else {
+                throw CLIException("[Error][getValuesOf] Argument \"" + str + "\" is neither a set flag or an active subcommand");
             }
-            int index = subcommands.at(subcmd).at(flag) + 1;
-            if(index >= args.size() || isFlagFormat(args[index])) {
-                return std::string();
-            }
-            return args[index];
+            return values;
         }
 
         // Setters
