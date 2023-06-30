@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <vector>
-#include <unordered_map>
 #include <unordered_set>
+#include <unordered_map>
 
 class CLIException : std::exception {
     private:
@@ -71,7 +71,7 @@ class CLI {
 
                     if(is_flag_word) {
                         if(isValidFlag(temp)) {
-                            if(!isFlagSet(temp)) {
+                            if(!isFlagActive(temp)) {
                                 subcommands.at(subcmd)[temp] = i;
                             } else {
                                 throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + temp + "\""); 
@@ -87,7 +87,7 @@ class CLI {
                         while(j < temp.size()) {
                             flag.push_back(temp[j]);
                             if(!isFlagPrefix(temp[j]) && isValidFlag(flag)) {
-                                if(!isFlagSet(flag)) {
+                                if(!isFlagActive(flag)) {
                                     subcommands.at(subcmd)[flag] = i;
                                     flag.pop_back();
                                 } else {
@@ -101,7 +101,7 @@ class CLI {
             }
         }
 
-        void resetFlags(const std::string& subcmd)
+        void resetFlags(const std::string& subcmd) // uninitializes all flags of a subcommand
         {
             if(!isValidSubcommand(subcmd) || subcommands.at(subcmd).empty()) {
                 return;
@@ -118,7 +118,7 @@ class CLI {
             max_subcommand_chain_count = 0;
         }
 
-        std::string trim(const std::string& str)
+        std::string trim(const std::string& str) // removes trailing whitespace
         {
             std::string trimmed;
             trimmed.reserve(str.size());
@@ -136,7 +136,7 @@ class CLI {
                     } else {
                         trimmed.push_back(' ');
                     }
-                } else if(str[i] == '=') {
+                } else if(str[i] == '=') { // turns flags such as "--flag=value" to "--flag"
                     return trimmed;
                 }
                 trimmed.push_back(str[i]);
@@ -145,21 +145,18 @@ class CLI {
             return trimmed;
         }
 
-        bool isFlagPrefix(char ch) const
+        bool isFlagPrefix(char ch) const // checks if a character is flag prefix
         {
             return ch == '-';
         }
 
-        bool isFlagFormat(const std::string& flag) const
+        bool isFlagFormat(const std::string& flag) const // checks if a string is in a flag format
         {
             std::string temp;
-            for(int i = 0; flag[i] == '-'; i++) {
+            for(int i = 0; isFlagPrefix(flag[i]); i++) {
                 temp.push_back(flag[i]);
             }
-            if(temp.empty() || temp.size() > 2 || temp.size() == flag.size()) {
-                return false;
-            }
-            return true;
+            return !temp.empty() && temp.size() <= 2 && temp.size() != flag.size();
         } 
 
     public:
@@ -186,7 +183,7 @@ class CLI {
             return args;
         }
 
-        const std::unordered_map<std::string, std::unordered_map<std::string, int>>& getValidSubcommandsAndFlags() const
+        const std::unordered_map<std::string, std::unordered_map<std::string, int>>& getSubcommands() const
         {
             return subcommands;
         }
@@ -200,9 +197,51 @@ class CLI {
             return valid_subcommands;
         }
 
-        std::unordered_map<std::string, int> getFlags(const std::string& subcmd = "") const
+        std::unordered_map<std::string, int> getFlags(std::string subcmd = "") const
         {
+            if(subcmd.empty()) {
+                subcmd = active_subcommand;
+            }
+
             return isValidSubcommand(subcmd) ? subcommands.at(subcmd) : throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
+        }
+
+        std::unordered_set<std::string> getValidFlags(std::string subcmd = "") const
+        {
+            if(subcmd.empty()) {
+                subcmd = active_subcommand;
+            }
+
+            if(!isValidSubcommand(subcmd)) {
+                throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
+            }
+
+            std::unordered_set<std::string> flags;
+            for(const auto& i : subcommands.at(subcmd)) {
+                flags.insert(i.first);
+            }
+
+            return flags;
+        }
+
+        std::unordered_set<std::string> getActiveFlags(std::string subcmd = "") const
+        {
+            if(subcmd.empty()) {
+                subcmd = active_subcommand;
+            }
+
+            if(!isValidSubcommand(subcmd)) {
+                throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
+            }
+
+            std::unordered_set<std::string> flags;
+            for(const auto& i : subcommands.at(subcmd)) {
+                if(i.second >= 0) {
+                    flags.insert(i.first);
+                }
+            }
+
+            return flags;
         }
 
         const std::string& getActiveSubcommand() const
@@ -384,12 +423,12 @@ class CLI {
             return active_subcommand.empty();
         }
 
-        bool isFlagSet(const std::string& flag) const
+        bool isFlagActive(const std::string& flag) const
         {
-            return isFlagSet(active_subcommand, flag);
+            return isFlagActive(active_subcommand, flag);
         }
 
-        bool isFlagSet(const std::string& subcmd, const std::string& flag) const // checks if a flag is initialized
+        bool isFlagActive(const std::string& subcmd, const std::string& flag) const // checks if a flag is initialized
         {
             if(!isValidSubcommand(subcmd)) {
                 throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
@@ -410,6 +449,17 @@ class CLI {
                 throw CLIException("[Error][" + std::string(__func__) + "] \"" + subcmd + "\" is not a valid subcommand");
             }
             return subcommands.at(subcmd).count(flag) > 0;
+        }
+
+        // Modifiers
+        void clear()
+        {
+            args.clear();
+            subcommands.clear();
+            subcommands.insert({"", std::unordered_map<std::string, int>()});
+            active_subcommand.clear();
+            active_subcommand_end_pos = 0;
+            max_subcommand_chain_count = 0;
         }
 
         // Printers
