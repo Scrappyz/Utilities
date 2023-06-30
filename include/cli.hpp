@@ -22,7 +22,7 @@ class CLI {
     private:
         std::vector<std::string> args;
         std::unordered_map<std::string, std::unordered_map<std::string, int>> subcommands; // valid subcommands and their valid flags
-        std::string active_subcommand; // the current active active_subcommand
+        std::string active_subcommand; // the current active subcommand
         int active_subcommand_end_pos; // stores the position the active subcommand ends in the arguement list
         int max_subcommand_chain_count; // keeps track of how many subcommand words can be chained
 
@@ -288,6 +288,21 @@ class CLI {
                 throw CLIException("[Error][" + std::string(__func__) + "] \"" + flag + "\" is not a valid flag");
             }
             return subcommands.at(subcmd).at(flag);
+        }
+
+        std::vector<std::string> getValueOf(const std::initializer_list<std::string>& flags, int limit = -1)
+        {
+            return getValueOf(std::vector<std::string>(flags));
+        }
+
+        std::vector<std::string> getValueOf(const std::vector<std::string>& flags, int limit = -1)
+        {
+            for(int i = 0; i < flags.size(); i++) {
+                if(isFlagActive(flags[i])) {
+                    return getValueOf(flags[i], limit);
+                }
+            }
+            return std::vector<std::string>();
         }
 
         std::vector<std::string> getValueOf(const std::string& str, int limit = -1)
