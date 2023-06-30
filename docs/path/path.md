@@ -1,4 +1,4 @@
-## Path library
+## Path Library
 The Path library aims to simplify and improve the process of performing operations on file systems with the `<filesystem>` library.
 
 ## Minimum C++ Version

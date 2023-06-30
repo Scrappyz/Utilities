@@ -1,3 +1,24 @@
+## CLI Library
+The CLI is a command-line parsing library that aims to simplify the development of console apps.
+
+## Minimum C++ Version
+- [C++11](https://en.cppreference.com/w/cpp/11)
+
+## Includes
+- [\<iostream>](https://en.cppreference.com/w/cpp/header/iostream)
+- [\<vector>](https://en.cppreference.com/w/cpp/container/vector)
+- [\<unordered_set>](https://en.cppreference.com/w/cpp/header/unordered_set)
+- [\<unordered_map>](https://en.cppreference.com/w/cpp/header/unordered_map)
+
+## Classes
+Defined in header `cli.hpp`
+| | |
+| --- | --- |
+| [CLI](Classes/CLI/CLI.md) | class to use to parse command-line arguments |
+| [CLIException](Classes/CLIExeption/CLIException.md) | custom exception for CLI class |
+
+## Usage
+```
 #include <iostream>
 #include "cli.hpp"
 
@@ -56,3 +77,4 @@ int main(int argc, char* argv[])
     
     return 0;
 }
+```
