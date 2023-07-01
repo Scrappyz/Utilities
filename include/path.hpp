@@ -327,7 +327,7 @@ namespace path {
         char copyWarning(const std::filesystem::path& path)
         {
             char ch;
-            std::cout << "[Warning] " << path << " already exists. Would you like to overwrite?" << std::endl;
+            std::cout << "[Warning] \"" << path.string() << "\" already exists. Would you like to overwrite?" << std::endl;
             std::cout << "[Y] for yes, [N] for no, [A] for yes to all, [X] to cancel: ";
             std::cin >> ch;
             std::cin.clear();
@@ -377,7 +377,7 @@ namespace path {
                     } 
                     
                     if(!from.filename().empty()) {
-                        to /= from.filename();
+                        to = std::filesystem::weakly_canonical(to / from.filename());
                         std::filesystem::create_directories(to);
                     }
 
@@ -386,7 +386,7 @@ namespace path {
                         bool is_source_dir = std::filesystem::is_directory(entry.path());
                         bool destination_exists = std::filesystem::exists(copy_to);
                         if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                            ch = _private::copyWarning(copy_to.filename());
+                            ch = _private::copyWarning(path::relative(copy_to));
                         }
 
                         if(ch == 'x' || ch == 'X') {
@@ -412,11 +412,11 @@ namespace path {
                         std::filesystem::create_directories(to);
                     } 
 
-                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? to / path::filename(from) : to;
+                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? std::filesystem::weakly_canonical(to / path::filename(from)) : to;
                     bool destination_exists = std::filesystem::exists(copy_to);
 
                     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                        ch = _private::copyWarning(copy_to.filename());
+                        ch = _private::copyWarning(path::relative(copy_to));
                     }
 
                     if(ch == 'x' || ch == 'X') {
