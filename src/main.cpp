@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 
         string subcmd = cli.getActiveSubcommand(); // the current subcommand
         vector<string> values; // will hold the values of flags or the active subcommand
-        values = cli.getValueOf(1);
+        values = cli.getValuesOf(1);
         out::print(values);
     } catch(const CLIException& e) {
         cout << e.what() << endl;

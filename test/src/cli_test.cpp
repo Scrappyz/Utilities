@@ -152,10 +152,13 @@ TEST(setValidFlags, duplicate_flags)
 {
     CLI cli;
     cli.setArguments({"MyProgram", "--help", "--help"});
-    EXPECT_THROW(cli.setValidFlags({"--help"}), CLIException);
+    cli.setValidFlags({"--help"});
+    EXPECT_EQ(cli.getFlagPosition("--help"), 2);
 
     cli.setArguments({"MyProgram", "--flag=value", "--flag"});
-    EXPECT_THROW(cli.setValidFlags({"--flag"}), CLIException);
+    cli.setValidFlags({"--flag"});
+    EXPECT_EQ(cli.getFlagPosition("--flag"), 2);
+    EXPECT_EQ(cli.getValuesOf("--flag"), vector<string>());
 }
 
 TEST(setValidFlags, flags_with_invalid_prefix)

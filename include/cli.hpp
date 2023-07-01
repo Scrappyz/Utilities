@@ -71,11 +71,7 @@ class CLI {
 
                     if(is_flag_word) {
                         if(isValidFlag(temp)) {
-                            if(!isFlagActive(temp)) {
-                                subcommands.at(subcmd)[temp] = i;
-                            } else {
-                                throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + temp + "\""); 
-                            }
+                            subcommands.at(subcmd)[temp] = i;
                         }
                     } else {
                         int j = 0;
@@ -87,12 +83,8 @@ class CLI {
                         while(j < temp.size()) {
                             flag.push_back(temp[j]);
                             if(!isFlagPrefix(temp[j]) && isValidFlag(flag)) {
-                                if(!isFlagActive(flag)) {
-                                    subcommands.at(subcmd)[flag] = i;
-                                    flag.pop_back();
-                                } else {
-                                    throw CLIException("[Error][" + std::string(__func__) + "] Duplicate flag \"" + flag + "\""); 
-                                }
+                                subcommands.at(subcmd)[flag] = i;
+                                flag.pop_back();
                             }
                             j++;
                         }
