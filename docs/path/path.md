@@ -6,6 +6,7 @@ The Path library aims to simplify and improve the process of performing operatio
 
 ## Includes
 - [\<iostream>](https://en.cppreference.com/w/cpp/io/basic_iostream)
+- [\<string>](https://en.cppreference.com/w/cpp/string)
 - [\<vector>](https://en.cppreference.com/w/cpp/container/vector)
 - [\<fstream>](https://en.cppreference.com/w/cpp/io/basic_fstream)
 - [\<filesystem>](https://en.cppreference.com/w/cpp/filesystem)
