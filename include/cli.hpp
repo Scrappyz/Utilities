@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <string>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
@@ -290,22 +290,27 @@ class CLI {
             return subcommands.at(subcmd).at(flag);
         }
 
-        std::vector<std::string> getValueOf(const std::initializer_list<std::string>& flags, int limit = -1)
+        std::vector<std::string> getValuesOf(int limit = -1) const
         {
-            return getValueOf(std::vector<std::string>(flags));
+            return getValuesOf(active_subcommand, limit);
         }
 
-        std::vector<std::string> getValueOf(const std::vector<std::string>& flags, int limit = -1)
+        std::vector<std::string> getValuesOf(const std::initializer_list<std::string>& flags, int limit = -1) const
+        {
+            return getValuesOf(std::vector<std::string>(flags));
+        }
+
+        std::vector<std::string> getValuesOf(const std::vector<std::string>& flags, int limit = -1) const
         {
             for(int i = 0; i < flags.size(); i++) {
                 if(isFlagActive(flags[i])) {
-                    return getValueOf(flags[i], limit);
+                    return getValuesOf(flags[i], limit);
                 }
             }
             return std::vector<std::string>();
         }
 
-        std::vector<std::string> getValueOf(const std::string& str, int limit = -1)
+        std::vector<std::string> getValuesOf(const std::string& str, int limit = -1) const
         {
             std::vector<std::string> values;
             if(limit == 0) {
@@ -313,12 +318,12 @@ class CLI {
             }
 
             if(isValidFlag(str)) {
-                int flag_pos = getFlagPosition(str);
+                int flag_pos = subcommands.at(active_subcommand).at(str);
                 if(flag_pos < 0) {
                     throw CLIException("[Error][getValuesOf] Flag \"" + str + "\" is not set");
                 }
 
-                std::string temp = getArgumentAt(flag_pos);
+                std::string temp = args[flag_pos];
                 int equal = temp.find_first_of("=");
                 if(equal != std::string::npos) {
                     values.push_back(temp.substr(equal + 1, temp.size() - equal));
@@ -340,6 +345,19 @@ class CLI {
             } else {
                 throw CLIException("[Error][getValuesOf] Argument \"" + str + "\" is neither a set flag or an active subcommand");
             }
+            return values;
+        }
+
+        std::unordered_map<std::string, std::vector<std::string>> getFlagValues() const
+        {
+            std::unordered_map<std::string, std::vector<std::string>> values;
+            values.insert({"", getValuesOf(active_subcommand)});
+            for(const auto& i : subcommands.at(active_subcommand)) {
+                if(i.second >= 0) {
+                    values.insert({i.first, getValuesOf(i.first)});
+                }
+            }
+
             return values;
         }
 
@@ -475,24 +493,5 @@ class CLI {
             active_subcommand.clear();
             active_subcommand_end_pos = 0;
             max_subcommand_chain_count = 0;
-        }
-
-        // Printers
-        void printArguments() const
-        {
-            for(int i = 0; i < args.size(); i++) {
-                std::cout << args[i] << " ";
-            }
-            std::cout << std::endl;
-        }
-
-        void printSubcommandsAndFlags() const
-        {
-            for(const auto& i : subcommands) {
-                std::cout << "[" << i.first << "]" << std::endl;
-                for(const auto& j : i.second) {
-                    std::cout << "    [" << j.first << " : " << j.second << "]" << std::endl;
-                }
-            }
         }
 };
