@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -24,22 +26,22 @@ namespace path {
         void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
     }
 
-    bool exists(const std::filesystem::path& path)
+    inline bool exists(const std::filesystem::path& path)
     {
         return std::filesystem::exists(path);
     }
 
-    bool isAbsolute(const std::filesystem::path& path)
+    inline bool isAbsolute(const std::filesystem::path& path)
     {
         return path.is_absolute();
     }
 
-    bool isRelative(const std::filesystem::path& path)
+    inline bool isRelative(const std::filesystem::path& path)
     {
         return path.is_relative();
     }
 
-    bool isValidFilenameChar(char ch) // checks if character passed is a valid character for filenames
+    inline bool isValidFilenameChar(char ch) // checks if character passed is a valid character for filenames
     {
         switch(ch) {
         #if defined(_WIN32)
@@ -61,13 +63,13 @@ namespace path {
         }
     }
 
-    bool isDirectorySeparator(char ch) 
+    inline bool isDirectorySeparator(char ch) 
     {
         char preferred = std::filesystem::path::preferred_separator;
         return ch == preferred || ch == '/' && preferred == '\\';
     }
 
-    std::string fileExtension(const std::filesystem::path& path)
+    inline std::string fileExtension(const std::filesystem::path& path)
     {
         std::string temp = path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
         int i = temp.size()-1;
@@ -87,27 +89,27 @@ namespace path {
         return result;
     }
 
-    bool hasFileExtension(const std::filesystem::path& path)
+    inline bool hasFileExtension(const std::filesystem::path& path)
     {
         return !fileExtension(path).empty();
     }
 
-    bool isDirectory(const std::filesystem::path& path)
+    inline bool isDirectory(const std::filesystem::path& path)
     {
         return std::filesystem::is_directory(path);
     }
 
-    bool isFile(const std::filesystem::path& path)
+    inline bool isFile(const std::filesystem::path& path)
     {
         return std::filesystem::is_regular_file(path);
     }
 
-    std::string filename(const std::filesystem::path& path) 
+    inline std::string filename(const std::filesystem::path& path) 
     {
         return path.filename().empty() ? path.parent_path().filename().string() : path.filename().string();
     }
 
-    double size(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte)
+    inline double size(const std::filesystem::path& path, const SizeMetric& metric = SizeMetric::Byte)
     {
         if(std::filesystem::exists(path)) {
             std::uintmax_t space = 0;
@@ -135,22 +137,22 @@ namespace path {
         }
     }
 
-    char directorySeparator() 
+    inline char directorySeparator() 
     {
         return std::filesystem::path::preferred_separator;
     }
 
-    std::string absolute(const std::filesystem::path& path)
+    inline std::string absolute(const std::filesystem::path& path)
     {
         return std::filesystem::absolute(path).string();
     }
 
-    std::string relative(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
+    inline std::string relative(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
     {
         return std::filesystem::relative(path, base_path).string();
     }
 
-    std::string join(const std::filesystem::path& p1, const std::filesystem::path& p2)
+    inline std::string join(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
         std::string result;
         
@@ -175,7 +177,7 @@ namespace path {
         return result;
     }
 
-    std::string join(const std::vector<std::filesystem::path>& paths)
+    inline std::string join(const std::vector<std::filesystem::path>& paths)
     {
         if(paths.empty()) {
             return std::string();
@@ -190,12 +192,12 @@ namespace path {
         return join(result, paths.back());
     }
 
-    std::string currentPath() 
+    inline std::string currentPath() 
     {
         return std::filesystem::current_path().string();
     }
 
-    std::string sourcePath() 
+    inline std::string sourcePath() 
     {
         std::filesystem::path source_path;
         #if defined(_WIN32)
@@ -210,12 +212,12 @@ namespace path {
         return source_path.parent_path().string();
     }
 
-    std::string rootName(const std::filesystem::path& path)
+    inline std::string rootName(const std::filesystem::path& path)
     {
         return path.root_name().string();
     }
 
-    void create(const std::filesystem::path& path, const std::string& data = "")
+    inline void create(const std::filesystem::path& path, const std::string& data = "")
     {
         if(!std::filesystem::exists(path)) {
             if(hasFileExtension(path)) {
@@ -235,7 +237,7 @@ namespace path {
         }
     }
 
-    void create(const std::filesystem::path& path, const std::vector<std::string>& data)
+    inline void create(const std::filesystem::path& path, const std::vector<std::string>& data)
     {
         std::string str;
         for(int i = 0; i < data.size(); i++) {
@@ -247,22 +249,22 @@ namespace path {
         create(path, str);
     }
 
-    void rename(const std::filesystem::path& path, const std::string& new_name)
+    inline void rename(const std::filesystem::path& path, const std::string& new_name)
     {
         std::filesystem::rename(path, path.parent_path() / new_name);
     }
 
-    void copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+    inline void copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
     {
         _private::copy(from, to, false, op);
     }
 
-    void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+    inline void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
     {
         _private::copy(from, to, true, op);
     }
 
-    void remove(const std::filesystem::path& path)
+    inline void remove(const std::filesystem::path& path)
     {
         if(std::filesystem::exists(path)) {
             if(std::filesystem::is_directory(path)) {
@@ -276,7 +278,7 @@ namespace path {
         }
     }
 
-    std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
+    inline std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
     {
         if(std::filesystem::exists(search_path)) {
             for(auto i = std::filesystem::recursive_directory_iterator(search_path); i != std::filesystem::recursive_directory_iterator(); i++) {
@@ -293,13 +295,13 @@ namespace path {
         }
     }
 
-    std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
+    inline std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
     {
         int n = pt == Traversal::NonRecursive ? 0 : -1;
         return path::find(search_path, file_to_find, n);
     }
 
-    std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
+    inline std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
     {
         std::vector<std::string> matches;
         if(std::filesystem::exists(search_path)) {
@@ -317,7 +319,7 @@ namespace path {
         }
     }
 
-    std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
+    inline std::vector<std::string> findAll(const std::filesystem::path& search_path, const std::string& file_to_find, const Traversal& pt = Traversal::NonRecursive)
     {
         int n = pt == Traversal::NonRecursive ? 0 : -1;
         return path::findAll(search_path, file_to_find, n);
@@ -325,7 +327,7 @@ namespace path {
 
     namespace _private {
 
-        char copyWarning(const std::filesystem::path& path)
+        inline char copyWarning(const std::filesystem::path& path)
         {
             char ch;
             std::cout << "[Warning] \"" << path.string() << "\" already exists. Would you like to overwrite?" << std::endl;
@@ -336,7 +338,7 @@ namespace path {
             return ch; 
         }
 
-        bool copyFile(const std::filesystem::path& from, const std::filesystem::path& to) 
+        inline bool copyFile(const std::filesystem::path& from, const std::filesystem::path& to) 
         {
             std::ifstream source(from, std::ios::binary);
             if(!source.is_open()) {
@@ -363,7 +365,7 @@ namespace path {
             return true;
         }
 
-        void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
+        inline void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
         {
             if(std::filesystem::exists(from)) {
                 char ch;
