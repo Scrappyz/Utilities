@@ -16,6 +16,19 @@ TEST(utility, isPrime)
     EXPECT_EQ(mathUtil::isPrime(97), true);
 }
 
+TEST(mod, general)
+{
+    EXPECT_EQ(mathUtil::mod(13, 5), 3);
+    EXPECT_EQ(mathUtil::mod(8, 4), 0);
+    EXPECT_EQ(mathUtil::mod(7, 2), 1);
+    EXPECT_EQ(mathUtil::mod(-5, 3), 1);
+    EXPECT_EQ(mathUtil::mod(3, 10), 3);
+    EXPECT_EQ(mathUtil::mod(13, 10), 3);
+    EXPECT_EQ(mathUtil::mod(-27, 10), 3);
+    EXPECT_EQ(mathUtil::mod(-3, 11), 8);
+    EXPECT_EQ(mathUtil::mod(-1, 11), 10);
+}
+
 TEST(utility, getSum)
 {
     EXPECT_EQ(mathUtil::getSum({2,4,6,8}), 20);

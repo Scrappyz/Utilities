@@ -34,6 +34,15 @@ namespace utility {
             return c < epsilon;
         }
 
+        int mod(int a, int b)
+        {
+            int r = a % b;
+            if(r < 0) {
+                r += b;
+            }
+            return r;
+        }
+
         template<typename T>
         double getSum(const std::vector<T>& v)
         {
