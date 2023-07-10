@@ -11,7 +11,7 @@ The Path library aims to simplify and improve the process of performing operatio
 - [\<fstream>](https://en.cppreference.com/w/cpp/io/basic_fstream)
 - [\<filesystem>](https://en.cppreference.com/w/cpp/filesystem)
 ### Windows
-- [\<libloaderapi.h>](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea)
+- [\<windows.h>](https://learn.microsoft.com/en-us/windows/win32/api/winbase/)
 ### Linux
 - [\<unistd.h>](https://pubs.opengroup.org/onlinepubs/7908799/xsh/unistd.h.html)
 - [\<sys/stat.h>](https://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html)
@@ -39,6 +39,7 @@ Defined in namespace `path`
 | [create](Functions/create.md) | creates a new file or directory |
 | [currentPath](Functions/currentPath.md) | returns the absolute path you are currently in |
 | [directorySeparator](Functions/directorySeparator.md) | returns a directory separator character |
+| [execute](Functions/execute.md) | execute a command |
 | [exists](Functions/exists.md) | checks if the given path exists |
 | [fileExtension](Functions/fileExtension.md) | returns the file extension of a given path or filename |
 | [fileSize](Functions/fileSize.md) | returns the file size of a given path |
@@ -52,6 +53,7 @@ Defined in namespace `path`
 | [isValidFilenameChar](Functions/isValidFilenameChar.md) | checks if the given character is valid for filenames |
 | [join](Functions/join.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
+| [open](Functions/open.md) | open a file with a program |
 | [relative](Functions/relative.md) | returns a path relative to another path |
 | [rename](Functions/rename.md) | renames a file or directory |
 | [rootName](Functions/rootName.md) | returns the name of the root |

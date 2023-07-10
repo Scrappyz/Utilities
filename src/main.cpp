@@ -1,13 +1,11 @@
 #include <iostream>
 #include "path.hpp"
-#include "print.hpp"
 
 using namespace std;
-namespace out = utility::print;
 
 int main(int argc, char* argv[])
 {
-    path::open("CMakeLists.txt");
+    path::open("CMakeLists.txt", "C:\\Users\\Michael Angelo\\AppData\\Local\\Programs\\Microsoft VS Code\\bin\\code");
     
     return 0;
 }

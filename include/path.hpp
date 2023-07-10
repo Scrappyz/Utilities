@@ -329,12 +329,12 @@ namespace path {
         return path::findAll(search_path, file_to_find, n);
     }
 
-    inline bool execute(const std::string& command, bool wait = true)
+    inline bool execute(const std::string& command, bool wait = false)
     {
         return _private::execute(command.c_str(), wait);
     }
 
-    inline bool execute(const std::vector<std::string>& command, bool wait = true)
+    inline bool execute(const std::vector<std::string>& command, bool wait = false)
     {
         std::string cstr;
         for(int i = 0; i < command.size(); i++) {
@@ -346,7 +346,7 @@ namespace path {
         return _private::execute(cstr.c_str(), wait);
     }
 
-    inline bool execute(const std::initializer_list<std::string>& command, bool wait = true)
+    inline bool execute(const std::initializer_list<std::string>& command, bool wait = false)
     {
         return execute(std::vector<std::string>(command), wait);
     }
