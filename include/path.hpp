@@ -6,14 +6,17 @@
 #include <fstream>
 #include <filesystem>
 #if defined(_WIN32)
-    #include <libloaderapi.h>
+    #include <windows.h>
 #elif defined(__linux__)
     #include <unistd.h>
     #include <sys/stat.h>
+    #include <sys/types.h>
+    #include <sys/wait.h>
+    #include <cstdlib>
 #elif defined(__APPLE__)
     #include <mach-o/dyld.h>
+    #include <cstdlib>
 #endif
-
 
 namespace path {
     
@@ -24,6 +27,7 @@ namespace path {
     namespace _private { // forward declaration
         char copyWarning(const std::filesystem::path& path);
         void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
+        bool execute(const char* command, bool wait);
     }
 
     inline bool exists(const std::filesystem::path& path)
@@ -325,6 +329,55 @@ namespace path {
         return path::findAll(search_path, file_to_find, n);
     }
 
+    inline bool execute(const std::string& command, bool wait = true)
+    {
+        return _private::execute(command.c_str(), wait);
+    }
+
+    inline bool execute(const std::vector<std::string>& command, bool wait = true)
+    {
+        std::string cstr;
+        for(int i = 0; i < command.size(); i++) {
+            cstr.append('"' + command[i] + '"');
+            if(i < command.size()-1) {
+                cstr.push_back(' ');
+            }
+        }
+        return _private::execute(cstr.c_str(), wait);
+    }
+
+    inline bool execute(const std::initializer_list<std::string>& command, bool wait = true)
+    {
+        return execute(std::vector<std::string>(command), wait);
+    }
+
+    inline bool open(const std::filesystem::path& file, const std::filesystem::path& program = "")
+    {
+        bool success = false;
+
+        #if defined(_WIN32)
+            if(program.empty()) {
+                HINSTANCE result = ShellExecuteW(NULL, L"open", file.c_str(), NULL, NULL, SW_SHOWNORMAL);
+                success = (INT_PTR)result > 32;
+            } else {
+                HINSTANCE result = ShellExecuteW(NULL, L"open", program.c_str(), file.c_str(), NULL, SW_SHOWNORMAL);
+                success = (INT_PTR)result > 32;
+            }
+        #elif defined(__APPLE__) || defined(__linux__)
+            std::string command = "xdg-open";
+            if (!program.empty()) {
+                command = program.string();
+            }
+
+            std::string filePath = file.string();
+
+            int result = std::system((command + " \"" + filePath + "\"").c_str());
+            success = (result == 0);
+        #endif
+
+        return success;
+    }
+
     namespace _private {
 
         inline char copyWarning(const std::filesystem::path& path)
@@ -439,6 +492,42 @@ namespace path {
             if(move) {
                 path::remove(from);
             }
+        }
+
+        inline bool execute(const char* command, bool wait)
+        {
+            #if defined(_WIN32)
+                STARTUPINFO si;
+                PROCESS_INFORMATION pi;
+                ZeroMemory(&si, sizeof(si));
+                ZeroMemory(&pi, sizeof(pi));
+                si.cb = sizeof(si);
+
+                if(CreateProcess(NULL, const_cast<LPSTR>(command), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+                    if(wait) {
+                        WaitForSingleObject(pi.hProcess, INFINITE);
+                        CloseHandle(pi.hProcess);
+                        CloseHandle(pi.hThread);
+                    }
+                    return true;
+                } 
+
+                return false;
+            #else
+                pid_t pid = fork();
+
+                if(pid == 0) {
+                    execl("/bin/sh", "sh", "-c", command, NULL);
+                    _exit(1); 
+                } else if(pid > 0) {
+                    if(wait) {
+                        wait(NULL); 
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            #endif
         }
 
     }
