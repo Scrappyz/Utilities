@@ -428,8 +428,9 @@ namespace path {
                     }
 
                     if(op == CopyOption::OverwriteAll) {
-                        path::remove(to);
-                        std::filesystem::create_directories(to);
+                        for(const auto& entry : std::filesystem::directory_iterator(to)) {
+                            path::remove(entry.path());
+                        }
                     } 
                     
                     if(!from.filename().empty()) {

@@ -17,8 +17,7 @@ void printConfig(const std::unordered_map<std::string, std::unordered_map<std::s
 
 int main(int argc, char* argv[])
 {
-    std::string config_path = path::join(path::sourcePath(), "config.txt");
-    Config config(config_path);
-    
+    string source = path::sourcePath();
+    path::copy(path::join(source, "sandbox/"), path::join(source, "temp"), path::CopyOption::OverwriteAll);
     return 0;
 }
