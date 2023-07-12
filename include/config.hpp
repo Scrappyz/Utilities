@@ -19,12 +19,12 @@ class Config {
         }
 
         // Getters
-        const std::string& getValueOf(const std::string& key) 
+        const std::string& getValueOf(const std::string& key) const
         {
             return config.at("").at(key);
         }
 
-        const std::string& getValueOf(const std::string& section, const std::string& key)
+        const std::string& getValueOf(const std::string& section, const std::string& key) const
         {
             return config.at(section).at(key);
         }

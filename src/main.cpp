@@ -19,9 +19,6 @@ int main(int argc, char* argv[])
 {
     std::string config_path = path::join(path::sourcePath(), "config.txt");
     Config config(config_path);
-    std::cout << config.getValueOf("wey") << std::endl;
-    std::cout << config.getValueOf("mykey") << std::endl;
-    std::cout << config.getValueOf("new section", "new key") << std::endl;
     
     return 0;
 }
