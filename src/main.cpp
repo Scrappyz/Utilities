@@ -4,20 +4,8 @@
 
 using namespace std;
 
-void printConfig(const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& keyval)
+int main()
 {
-    for(const auto& i : keyval) {
-        std::cout << "[" << i.first << "]" << std::endl;
-        for(const auto& j : i.second) {
-            std::cout << "    " << j.first << " = " << j.second << std::endl;
-        }
-        std::cout << std::endl;
-    }
-}
-
-int main(int argc, char* argv[])
-{
-    string source = path::sourcePath();
-    path::copy(path::join(source, "sandbox/"), path::join(source, "temp"), path::CopyOption::OverwriteAll);
-    return 0;
+    std::string file_path = path::join(path::sourcePath(), "temp/test.txt");
+    Config::modifyValueInFile(file_path, "nokey1", "fuck");
 }
