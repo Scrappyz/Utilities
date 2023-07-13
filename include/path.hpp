@@ -26,7 +26,7 @@ namespace path {
 
     namespace _private { // forward declaration
         char copyWarning(const std::filesystem::path& path);
-        void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
+        bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
         bool execute(const char* command, bool wait);
     }
 
@@ -258,14 +258,14 @@ namespace path {
         std::filesystem::rename(path, path.parent_path() / new_name);
     }
 
-    inline void copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+    inline bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
     {
-        _private::copy(from, to, false, op);
+        return _private::copy(from, to, false, op);
     }
 
-    inline void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
+    inline bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None)
     {
-        _private::copy(from, to, true, op);
+        return _private::copy(from, to, true, op);
     }
 
     inline void remove(const std::filesystem::path& path)
@@ -418,7 +418,7 @@ namespace path {
             return true;
         }
 
-        inline void copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
+        inline bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
         {
             if(std::filesystem::exists(from)) {
                 char ch;
@@ -447,7 +447,7 @@ namespace path {
                         }
 
                         if(ch == 'x' || ch == 'X') {
-                            return;
+                            return false
                         }
 
                         if(is_source_dir) { 
@@ -477,7 +477,7 @@ namespace path {
                     }
 
                     if(ch == 'x' || ch == 'X') {
-                        return;
+                        return false;
                     }
 
                     if(is_source_dir) { 
@@ -493,6 +493,8 @@ namespace path {
             if(move) {
                 path::remove(from);
             }
+
+            return true;
         }
 
         inline bool execute(const char* command, bool wait)
