@@ -10,6 +10,62 @@ class Config {
     private:
         std::unordered_map<std::string, std::unordered_map<std::string, std::string>> config;
 
+        static bool hasKey(const std::string& line, const std::string& key)
+        {
+            if(line.empty() || key.empty()) {
+                return false;
+            }
+
+            int i = 0;
+            while(i < line.size() && line[i] == ' ') {
+                i++;
+            }
+
+            while(i < line.size()) {
+                if(line[i] == '=') {
+                    return false;
+                }
+
+                if(line[i] == key[0]) {
+                    int j = 0;
+                    while(i < line.size() && j < key.size() && line[i] == key[j]) {
+                        i++;
+                        j++;
+                    }
+                    
+                    if(i >= line.size() && j >= key.size() || (line[i] == ' ' || line[i] == '=') && j >= key.size()) {
+                        return true;
+                    }
+                } else {
+                    i++;
+                }
+            }
+
+            return false;
+        }
+
+        static std::string trim(const std::string& str)
+        {
+            std::string trimmed;
+            trimmed.reserve(str.size());
+            
+            int i = 0;
+            while(i < str.size() && str[i] == ' ') {
+                i++;
+            }
+
+            while(i < str.size()) {
+                trimmed.push_back(str[i]);
+                i++;
+            }
+
+            while(trimmed.back() == ' ') {
+                trimmed.pop_back();
+            }
+
+            return trimmed;
+        }
+
     public:
         // Constructors
         Config() : config() {}
@@ -118,15 +174,8 @@ class Config {
             }
         }
 
-        static void printData(const std::vector<std::string>& v)
-        {
-            for(const auto& i : v) {
-                std::cout << i << std::endl;
-            }
-        }
-
         // Modifiers
-        static void modifyValueInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
+        static bool modifyValueInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
         {
             std::ifstream input(config_path);
 
@@ -135,65 +184,99 @@ class Config {
             }
 
             std::vector<std::string> data;
-            std::string temp;
+            std::string line;
             std::string current_section;
-            while(getline(input, temp)) {
-                while(!temp.empty() && temp.back() == ' ') {
-                    temp.pop_back();
-                }
+            bool new_val_has_space = (new_val.find(' ') != std::string::npos);
+            bool return_val = false;
+            while(getline(input, line)) {
+                line = trim(line);
 
-                if(temp.empty()) {
+                if(line.empty()) {
                     data.push_back("");
                     continue;
                 }
 
                 int i = 0;
-                while(i < temp.size() && temp[i] == ' ') {
-                    i++;
-                }
 
-                if(temp[i] == '#') {
-                    data.push_back(temp.substr(i, temp.size()-i));
+                if(line[i] == '#') { // if comment, add it to data
+                    data.push_back(line);
                     continue;
                 }
 
-                if(temp[i] == '[') {
+                if(line[i] == '[') { // if section
                     current_section.clear();
                     i++;
-                    while(i < temp.size() && temp[i] != ']') {
-                        current_section.push_back(temp[i]);
+                    while(i < line.size() && line[i] != ']') {
+                        current_section.push_back(line[i]);
                         i++;
                     }
                     data.push_back("[" + current_section + "]");
                     continue;
                 }
 
-                if(current_section != section) {
-                    data.push_back(temp.substr(i, temp.size()-i));
+                if(current_section != section) { // do not modify if it is not the given section
+                    data.push_back(line);
                     continue;
                 }
 
-                size_t f = temp.find(key);
-                if(f != std::string::npos) {
-                    std::string m;
-                    i += key.size();
-                    while(i < temp.size() && (temp[i] == ' ' || temp[i] == '=')) {
-                        m.push_back(temp[i]);
+                // check if the given key is in the current line
+                if(hasKey(line, key)) {
+                    std::string keyval = key;
+                    i += key.size(); // move the pointer beyond the key
+
+                    while(i < line.size() && (line[i] == ' ' || line[i] == '=')) { // append the assign operator
+                        keyval.push_back(line[i]);
                         i++;
                     }
-                    data.push_back(key + m + new_val);
-                    
+
+                    if(new_val_has_space) { // add quotation if there is spaces
+                        keyval.append("\"" + new_val + "\"");
+                    } else {
+                        keyval.append(new_val);
+                    }
+
+                    int spaces = 0;
+                    while(i < line.size() && line[i] != '#') { // count spaces beyond value
+                        if(line[i] == ' ') {
+                            spaces++;
+                        } else {
+                            spaces = 0;
+                        }
+                        i++;
+                    }
+
+                    if(i >= line.size()) {
+                        data.push_back(keyval);
+                        continue;
+                    }
+
+                    keyval.append(std::string(spaces, ' '));
+
+                    while(i < line.size()) {
+                        keyval.push_back(line[i]);
+                        i++;
+                    }
+
+                    data.push_back(keyval);
+                    return_val = true;
                 } else {
-                    data.push_back(temp.substr(i, temp.size()-i));
+                    data.push_back(line);
                 }
             }
 
             input.close();
-            printData(data);
+
+            std::ofstream output(config_path);
+            for(int i = 0; i < data.size(); i++) {
+                output << data[i] << std::endl;
+            }
+            output.close();
+
+            return return_val;
         }
 
-        static void modifyValueInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
+        static bool modifyValueInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
         {
-            modifyValueInFile(config_path, "", key, new_val);
+            return modifyValueInFile(config_path, "", key, new_val);
         }
 };
