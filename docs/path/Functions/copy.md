@@ -3,12 +3,15 @@ Defined in header `path.hpp`
 
 | Declarations |
 | --- |
-| void copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None) |
+| bool copy(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None) |
 
 ## Parameters
 `from` - the source file/directory to copy \
 `to` - the destination file/directory to copy to \
 `op` - option what to do with existing files
+
+## Return Value
+Returns `true` if the copy operation was completed, `false` otherwise.
 
 ## Notes
 - If there is a directory separator at the end of the `from` path, it will only copy the contents of the source directory.

@@ -3,12 +3,15 @@ Defined in header `path.hpp`
 
 | Declarations |
 | --- |
-| void move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None) |
+| bool move(const std::filesystem::path& from, const std::filesystem::path& to, const CopyOption& op = CopyOption::None) |
 
 ## Parameters
 `from` - the source file/directory to move \
 `to` - the destination file/directory to move to \
 `op` - option to do with existing files (see [CopyOption](../Enums/CopyOption.md))
+
+## Return Value
+Returns `true` if the move operation was completed, `false` otherwise.
 
 ## Notes
 - If there is a directory separator at the end of the `from` path, it will only move the contents of the source directory.

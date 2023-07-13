@@ -447,7 +447,7 @@ namespace path {
                         }
 
                         if(ch == 'x' || ch == 'X') {
-                            return false
+                            return false;
                         }
 
                         if(is_source_dir) { 
