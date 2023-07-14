@@ -20,6 +20,10 @@ class Config {
                 i++;
             }
 
+            if(isQuotation(line[i])) {
+                i++;
+            }
+
             while(i < line.size()) {
                 if(line[i] == '=') {
                     return false;
@@ -31,6 +35,10 @@ class Config {
                         i++;
                         j++;
                     }
+
+                    while(i < line.size() && isQuotation(line[i])) {
+                        i++;
+                    }
                     
                     if(i >= line.size() && j >= key.size() || (line[i] == ' ' || line[i] == '=') && j >= key.size()) {
                         return true;
@@ -41,7 +49,7 @@ class Config {
             }
 
             return false;
-        }
+        } 
 
         static std::string trim(const std::string& str)
         {
@@ -63,6 +71,11 @@ class Config {
             }
 
             return trimmed;
+        }
+
+        static bool isQuotation(char ch)
+        {
+            return ch == '\'' || ch == '\"';
         }
 
     public:
@@ -220,15 +233,26 @@ class Config {
 
                 // check if the given key is in the current line
                 if(hasKey(line, key)) {
-                    std::string keyval = key;
-                    i += key.size(); // move the pointer beyond the key
+                    std::string keyval;
+                    if(isQuotation(line[i])) { // skip quotation
+                        keyval.push_back(line[i]);
+                        i++;
+                    }
+
+                    keyval.append(key);
+                    i += key.size();
+
+                    if(isQuotation(line[i])) { // skip quotation
+                        keyval.push_back(line[i]);
+                        i++;
+                    }
 
                     while(i < line.size() && (line[i] == ' ' || line[i] == '=')) { // append the assign operator
                         keyval.push_back(line[i]);
                         i++;
                     }
 
-                    if(new_val_has_space) { // add quotation if there is spaces
+                    if(new_val_has_space) { // add quotation to value if there are spaces
                         keyval.append("\"" + new_val + "\"");
                     } else {
                         keyval.append(new_val);
@@ -246,6 +270,7 @@ class Config {
 
                     if(i >= line.size()) {
                         data.push_back(keyval);
+                        return_val = true;
                         continue;
                     }
 

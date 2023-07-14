@@ -65,4 +65,34 @@ val3
 val 4
 ```
 
+## Constructors
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [(constructors)](Methods/constructors.md) | initializes the `Config` object with the contents of the given configuration file |
+
+## Getters
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [getValueOf](Methods/getValueOf.md) | returns the value of the key in the given section |
+
+## Setters
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [setConfig](Methods/setConfig.md) | initializes the `Config` object with the contents of the given configuration file |
+
+## Modifiers
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [modifyValueInFile](Methods/modifyValueInFile.md) | modifies the value of the given section and key in a config file <br> (static) |
+
+
+
 
