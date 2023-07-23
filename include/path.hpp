@@ -221,36 +221,70 @@ namespace path {
         return path.root_name().string();
     }
 
-    inline void create(const std::filesystem::path& path, const std::string& data = "")
+    inline bool createDirectory(const std::filesystem::path& path)
     {
-        if(!std::filesystem::exists(path)) {
-            if(hasFileExtension(path)) {
-                std::ofstream file(path);
-                file << data;
-                file.close();
-            } else {
-                std::filesystem::create_directories(path);
-            }
-        } else if(std::filesystem::is_regular_file(path)) {
+        return std::filesystem::create_directories(path);
+    }
+
+    inline bool createFile(const std::filesystem::path& path, const std::string& data, const CopyOption& op = CopyOption::None)
+    {
+        if(op == CopyOption::SkipExisting) {
+            return false;
+        }
+
+        if(!std::filesystem::exists(path) || op == CopyOption::OverwriteExisting || op == CopyOption::OverwriteAll) {
+            std::ofstream file(path);
+            file << data;
+            file.close();
+            return true;
+        } else {
             char ch = _private::copyWarning(path.filename());
             if(ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
                 std::ofstream file(path);
                 file << data;
                 file.close();
+                return true;
             }
+            return false;
         }
     }
 
-    inline void create(const std::filesystem::path& path, const std::vector<std::string>& data)
+    inline bool createFile(const std::filesystem::path& path, const std::vector<std::string>& data, const CopyOption& op = CopyOption::None)
     {
-        std::string str;
-        for(int i = 0; i < data.size(); i++) {
-            str += data[i];
-            if(i < data.size()-1) {
-                str.push_back('\n');
-            }
+        if(op == CopyOption::SkipExisting) {
+            return false;
         }
-        create(path, str);
+
+        if(!std::filesystem::exists(path) || op == CopyOption::OverwriteExisting || op == CopyOption::OverwriteAll) {
+            std::ofstream file(path);
+            for(int i = 0; i < data.size(); i++) {
+                file << data[i];
+                if(i < data.size()-1) {
+                    file << std::endl;
+                }
+            }
+            file.close();
+            return true;
+        } else {
+            char ch = _private::copyWarning(path.filename());
+            if(ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                std::ofstream file(path);
+                for(int i = 0; i < data.size(); i++) {
+                    file << data[i] << std::endl;
+                    if(i < data.size()-1) {
+                        file << std::endl;
+                    }
+                }
+                file.close();
+                return true;
+            }
+            return false;
+        }
+    }
+
+    inline bool createFile(const std::filesystem::path& path, const CopyOption& op = CopyOption::None)
+    {
+        return createFile(path, "", op);
     }
 
     inline void rename(const std::filesystem::path& path, const std::string& new_name)
@@ -270,15 +304,14 @@ namespace path {
 
     inline void remove(const std::filesystem::path& path)
     {
-        if(std::filesystem::exists(path)) {
-            if(std::filesystem::is_directory(path)) {
-                std::filesystem::remove_all(path);
-                if(path.filename().empty()) {
-                    std::filesystem::create_directories(path);
-                }
-            } else {
-                std::filesystem::remove(path);
-            }
+        if(!std::filesystem::exists(path)) {
+            return;
+        }
+
+        if(std::filesystem::is_directory(path)) {
+            std::filesystem::remove_all(path);
+        } else {
+            std::filesystem::remove(path);
         }
     }
 
@@ -420,58 +453,31 @@ namespace path {
 
         inline bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
         {
-            if(std::filesystem::exists(from)) {
-                char ch;
-                if(std::filesystem::is_directory(from)) {
-                    if(!std::filesystem::is_directory(to)) {
-                        throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
+            if(!std::filesystem::exists(from)) {
+                throw std::runtime_error("[Error][copy] \"" + from.string() + "\" does not exist");
+            }
+
+            char ch;
+            if(std::filesystem::is_directory(from)) {
+                if(!std::filesystem::is_directory(to)) {
+                    throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
+                }
+
+                if(op == CopyOption::OverwriteAll) {
+                    for(const auto& entry : std::filesystem::directory_iterator(to)) {
+                        path::remove(entry.path());
                     }
+                } 
+                
+                if(!from.filename().empty()) {
+                    to = std::filesystem::weakly_canonical(to / from.filename());
+                    std::filesystem::create_directories(to);
+                }
 
-                    if(op == CopyOption::OverwriteAll) {
-                        for(const auto& entry : std::filesystem::directory_iterator(to)) {
-                            path::remove(entry.path());
-                        }
-                    } 
-                    
-                    if(!from.filename().empty()) {
-                        to = std::filesystem::weakly_canonical(to / from.filename());
-                        std::filesystem::create_directories(to);
-                    }
-
-                    for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
-                        std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
-                        bool is_source_dir = std::filesystem::is_directory(entry.path());
-                        bool destination_exists = std::filesystem::exists(copy_to);
-                        if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                            ch = _private::copyWarning(path::relative(copy_to));
-                        }
-
-                        if(ch == 'x' || ch == 'X') {
-                            return false;
-                        }
-
-                        if(is_source_dir) { 
-                            std::filesystem::create_directories(copy_to);
-                        } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                            _private::copyFile(entry.path(), copy_to);
-                        } 
-                    }
-                } else {
-                    if(from.filename().empty()) {
-                        from = from.parent_path();
-                    }
-
-                    bool is_source_dir = std::filesystem::is_directory(from);
-                    bool is_destination_dir = std::filesystem::is_directory(to);
-
-                    if(is_destination_dir && op == CopyOption::OverwriteAll) {
-                        path::remove(to);
-                        std::filesystem::create_directories(to);
-                    } 
-
-                    std::filesystem::path copy_to = std::filesystem::is_directory(to) ? std::filesystem::weakly_canonical(to / path::filename(from)) : to;
+                for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
+                    std::filesystem::path copy_to = to / std::filesystem::relative(entry.path(), from);
+                    bool is_source_dir = std::filesystem::is_directory(entry.path());
                     bool destination_exists = std::filesystem::exists(copy_to);
-
                     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
                         ch = _private::copyWarning(path::relative(copy_to));
                     }
@@ -483,11 +489,38 @@ namespace path {
                     if(is_source_dir) { 
                         std::filesystem::create_directories(copy_to);
                     } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
-                        _private::copyFile(from, copy_to);
+                        _private::copyFile(entry.path(), copy_to);
                     } 
                 }
             } else {
-                throw std::runtime_error("[Error][copy] \"" + from.string() + "\" does not exist");
+                if(from.filename().empty()) {
+                    from = from.parent_path();
+                }
+
+                bool is_source_dir = std::filesystem::is_directory(from);
+                bool is_destination_dir = std::filesystem::is_directory(to);
+
+                if(is_destination_dir && op == CopyOption::OverwriteAll) {
+                    path::remove(to);
+                    std::filesystem::create_directories(to);
+                } 
+
+                std::filesystem::path copy_to = std::filesystem::is_directory(to) ? std::filesystem::weakly_canonical(to / path::filename(from)) : to;
+                bool destination_exists = std::filesystem::exists(copy_to);
+
+                if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
+                    ch = _private::copyWarning(path::relative(copy_to));
+                }
+
+                if(ch == 'x' || ch == 'X') {
+                    return false;
+                }
+
+                if(is_source_dir) { 
+                    std::filesystem::create_directories(copy_to);
+                } else if(!destination_exists || op == CopyOption::OverwriteExisting || ch == 'y' || ch == 'Y' || ch == 'a' || ch == 'A') {
+                    _private::copyFile(from, copy_to);
+                } 
             }
 
             if(move) {

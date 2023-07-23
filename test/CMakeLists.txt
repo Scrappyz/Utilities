@@ -14,6 +14,10 @@ add_executable(utility_test ${CMAKE_CURRENT_SOURCE_DIR}/src/utility_test.cpp)
 target_include_directories(utility_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 target_link_libraries(utility_test PUBLIC gtest_main)
 
+add_executable(config_test ${CMAKE_CURRENT_SOURCE_DIR}/src/config_test.cpp)
+target_include_directories(config_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+target_link_libraries(config_test PUBLIC gtest_main)
+
 add_test(
     NAME PathTest
     COMMAND path_test
@@ -21,4 +25,8 @@ add_test(
 add_test(
     NAME UtilityTest
     COMMAND utility_test
+)
+add_test(
+    NAME ConfigTest
+    COMMAND config_test
 )

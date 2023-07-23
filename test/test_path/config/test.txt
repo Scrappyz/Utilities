@@ -1,0 +1,20 @@
+# Comment
+key1=val1
+key2 = val2   # some commment
+"key 3" = val3
+key4 = "val 4"
+"key 5" = "val 5"
+
+[Section 1]
+key1=val1
+key2 = val2   # some commment
+"key 3" = val3
+key4 = "val4"
+"key 5" = "val 5"
+
+[Section 2]
+key1=val1
+key2 = val2   # some commment
+"key 3" = val3
+key4 = "val 4"
+"key 5" = "val 5"

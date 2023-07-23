@@ -1,7 +1,66 @@
+#include <unordered_set>
 #include "path.hpp"
 #include "gtest/gtest.h"
 
 using namespace path;
+
+std::string test_path = path::join(path::sourcePath(), "../test_path/path");
+
+std::unordered_set<std::filesystem::path> getPathContent(const std::filesystem::path& path, bool include_parent = false)
+{
+    std::unordered_set<std::filesystem::path> result;
+    std::filesystem::path relative_to = include_parent ? path.parent_path() : path;
+
+    for(const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+        result.insert(path::relative(entry.path(), relative_to));
+    }
+
+    return result;
+}
+
+bool testCopy(const std::filesystem::path& from, std::filesystem::path to)
+{
+    path::copy(from, to, path::CopyOption::SkipExisting);
+
+    // "from" & "to": parent, parent
+    // "from/" & "to": no parent, no parent
+    // "from" & "to/": parent, parent
+    // "from/" & "to/": no parent, no parent
+    std::unordered_set<std::filesystem::path> c1 = getPathContent(from, !from.filename().empty());
+    std::unordered_set<std::filesystem::path> c2 = getPathContent(to, false);
+
+    bool result = true;
+    for(const auto& i : c1) {
+        if(c2.count(i) < 1) {
+            result = false;
+        }
+    }
+
+    // delete new content after
+
+    return result;
+}
+
+bool testMove(const std::filesystem::path& from, const std::filesystem::path& to)
+{
+    std::unordered_set<std::filesystem::path> c1 = getPathContent(from, !from.filename().empty());
+
+    path::move(from, to, path::CopyOption::SkipExisting);
+
+    if(path::exists(from)) {
+        return false;
+    }
+
+    std::unordered_set<std::filesystem::path> c2 = getPathContent(to, false);
+
+    for(const auto& i : c1) {
+        if(c2.count(i) < 1) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 TEST(isValidFilenameChar, check)
 {
@@ -114,4 +173,14 @@ TEST(joins, end_separator)
     EXPECT_EQ(join({"a/b/c/d/../../"}), "a\\b\\");
     EXPECT_EQ(join({"a/b/c/d/../../", "e/f/..", "g"}), "a\\b\\e\\g");
     EXPECT_EQ(join({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
+}
+
+TEST(createFile, general)
+{
+
+}
+
+TEST(copy, general)
+{
+    ASSERT_TRUE(testCopy(path::join(test_path, "sandbox"), path::join(test_path, "temp")));
 }
