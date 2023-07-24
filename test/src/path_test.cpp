@@ -18,14 +18,10 @@ std::unordered_set<std::filesystem::path> getPathContent(const std::filesystem::
     return result;
 }
 
-bool testCopy(const std::filesystem::path& from, std::filesystem::path to)
+bool testCopy(const std::filesystem::path& from, std::filesystem::path to) // good
 {
     path::copy(from, to, path::CopyOption::SkipExisting);
 
-    // "from" & "to": parent, parent
-    // "from/" & "to": no parent, no parent
-    // "from" & "to/": parent, parent
-    // "from/" & "to/": no parent, no parent
     std::unordered_set<std::filesystem::path> c1 = getPathContent(from, !from.filename().empty());
     std::unordered_set<std::filesystem::path> c2 = getPathContent(to, false);
 
@@ -33,33 +29,16 @@ bool testCopy(const std::filesystem::path& from, std::filesystem::path to)
     for(const auto& i : c1) {
         if(c2.count(i) < 1) {
             result = false;
+            continue;
         }
+        path::remove(path::join(to, i));
     }
 
-    // delete new content after
+    if(!from.filename().empty()) {
+        path::remove(path::join(to, from.filename()));
+    }
 
     return result;
-}
-
-bool testMove(const std::filesystem::path& from, const std::filesystem::path& to)
-{
-    std::unordered_set<std::filesystem::path> c1 = getPathContent(from, !from.filename().empty());
-
-    path::move(from, to, path::CopyOption::SkipExisting);
-
-    if(path::exists(from)) {
-        return false;
-    }
-
-    std::unordered_set<std::filesystem::path> c2 = getPathContent(to, false);
-
-    for(const auto& i : c1) {
-        if(c2.count(i) < 1) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 TEST(isValidFilenameChar, check)
@@ -175,12 +154,8 @@ TEST(joins, end_separator)
     EXPECT_EQ(join({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
 }
 
-TEST(createFile, general)
-{
-
-}
-
 TEST(copy, general)
 {
     ASSERT_TRUE(testCopy(path::join(test_path, "sandbox"), path::join(test_path, "temp")));
+    ASSERT_TRUE(testCopy(path::join(test_path, "sandbox/"), path::join(test_path, "temp")));
 }
