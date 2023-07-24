@@ -34,7 +34,7 @@ Defined in namespace `path`
 
 | Function | Description |
 | --- | --- |
-| [absolute](Functions/absolute.md) | returns the absolute path of a given relative path |
+| [absolutePath](Functions/absolutePath.md) | returns the absolute path of a given relative path |
 | [copy](Functions/copy.md) | copies a file or directory |
 | [create](Functions/create.md) | creates a new file or directory |
 | [currentPath](Functions/currentPath.md) | returns the absolute path you are currently in |
@@ -47,14 +47,14 @@ Defined in namespace `path`
 | [find](Functions/find.md) | finds a given file |
 | [findAll](Functions/findAll.md) | finds multiple of the same file |
 | [hasFileExtension](Functions/hasFileExtension.md) | checks if a given path or filename has an extension |
-| [isAbsolute](Functions/isAbsolute.md) | checks if the given path is an absolute path |
+| [isAbsolutePath](Functions/isAbsolutePath.md) | checks if the given path is an absolute path |
 | [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
-| [isRelative](Functions/isRelative.md) | checks if the given path is a relative path |
+| [isRelativePath](Functions/isRelativePath.md) | checks if the given path is a relative path |
 | [isValidFilenameChar](Functions/isValidFilenameChar.md) | checks if the given character is valid for filenames |
-| [join](Functions/join.md) | concatenates two or more paths together |
+| [joinPath](Functions/joinPath.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
 | [open](Functions/open.md) | open a file with a program |
-| [relative](Functions/relative.md) | returns a path relative to another path |
+| [relativePath](Functions/relativePath.md) | returns a path relative to another path |
 | [rename](Functions/rename.md) | renames a file or directory |
 | [rootName](Functions/rootName.md) | returns the name of the root |
 | [sourcePath](Functions/sourcePath.md) | returns the absolute path to the executable |

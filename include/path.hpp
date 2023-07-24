@@ -35,12 +35,12 @@ namespace path {
         return std::filesystem::exists(path);
     }
 
-    inline bool isAbsolute(const std::filesystem::path& path)
+    inline bool isAbsolutePath(const std::filesystem::path& path)
     {
         return path.is_absolute();
     }
 
-    inline bool isRelative(const std::filesystem::path& path)
+    inline bool isRelativePath(const std::filesystem::path& path)
     {
         return path.is_relative();
     }
@@ -146,17 +146,17 @@ namespace path {
         return std::filesystem::path::preferred_separator;
     }
 
-    inline std::string absolute(const std::filesystem::path& path)
+    inline std::string absolutePath(const std::filesystem::path& path)
     {
         return std::filesystem::absolute(path).string();
     }
 
-    inline std::string relative(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
+    inline std::string relativePath(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path())
     {
         return std::filesystem::relative(path, base_path).string();
     }
 
-    inline std::string join(const std::filesystem::path& p1, const std::filesystem::path& p2)
+    inline std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
         std::string result;
         
@@ -181,19 +181,19 @@ namespace path {
         return result;
     }
 
-    inline std::string join(const std::vector<std::filesystem::path>& paths)
+    inline std::string joinPath(const std::vector<std::filesystem::path>& paths)
     {
         if(paths.empty()) {
             return std::string();
         } else if(paths.size() < 2) {
-            return join(paths[0], "");
+            return joinPath(paths[0], "");
         }
 
         std::filesystem::path result = paths[0];
         for(int i = 1; i < paths.size()-1; i++) {
             result /= paths[i];
         }
-        return join(result, paths.back());
+        return joinPath(result, paths.back());
     }
 
     inline std::string currentPath() 
@@ -479,7 +479,7 @@ namespace path {
                     bool is_source_dir = std::filesystem::is_directory(entry.path());
                     bool destination_exists = std::filesystem::exists(copy_to);
                     if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                        ch = _private::copyWarning(path::relative(copy_to));
+                        ch = _private::copyWarning(path::relativePath(copy_to));
                     }
 
                     if(ch == 'x' || ch == 'X') {
@@ -509,7 +509,7 @@ namespace path {
                 bool destination_exists = std::filesystem::exists(copy_to);
 
                 if(op == CopyOption::None && destination_exists && ch != 'a' && ch != 'A') {
-                    ch = _private::copyWarning(path::relative(copy_to));
+                    ch = _private::copyWarning(path::relativePath(copy_to));
                 }
 
                 if(ch == 'x' || ch == 'X') {

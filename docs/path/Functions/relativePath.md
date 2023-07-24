@@ -1,9 +1,9 @@
-## path::relative
+## path::relativePath
 Defined in header `path.hpp`
 
 | Declarations |
 | --- |
-| std::string relative(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path()) |
+| std::string relativePath(const std::filesystem::path& path, const std::filesystem::path& base_path = std::filesystem::current_path()) |
 
 ## Parameters
 `path` - an existing path \
@@ -21,7 +21,7 @@ using namespace std;
 
 int main()
 {
-    cout << path::relative("foo/bar/koo/aid", "foo/bar") << endl;
+    cout << path::relativePath("foo/bar/koo/aid", "foo/bar") << endl;
 
     return 0;
 }

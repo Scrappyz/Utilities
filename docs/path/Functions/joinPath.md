@@ -1,10 +1,10 @@
-## path::join
+## path::joinPath
 Defined in header `path.hpp`
 
 | Declarations |
 | --- |
-| std::string join(const std::filesystem::path& p1, const std::filesystem::path& p2) |
-| std::string join(const std::vector&lt;std::filesystem::path&gt;& paths) |
+| std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2) |
+| std::string joinPath(const std::vector&lt;std::filesystem::path&gt;& paths) |
 
 ## Parameters
 `p1` - a path \
@@ -27,12 +27,12 @@ using namespace std;
 
 int main()
 {
-    cout << path::join("a/b/c/d", "e/f/g") << endl;
-    cout << path::join("a/b/c/d", "e/f/g/") << endl; // separator at the end will be preserved
-    cout << path::join("a/b/c/d", "../..") << endl;
-    cout << path::join("a/b/c/d", "../../") << endl; // separator at the end will be preserved
-    cout << path::join({"a/b/c/d", "../..", "e/f/g", "h/i/.."}) << endl;
-    cout << path::join({"a/b/c/d", "../..", "e/f/g", "h/i/../"}) << endl; // preserve end separator
+    cout << path::joinPath("a/b/c/d", "e/f/g") << endl;
+    cout << path::joinPath("a/b/c/d", "e/f/g/") << endl; // separator at the end will be preserved
+    cout << path::joinPath("a/b/c/d", "../..") << endl;
+    cout << path::joinPath("a/b/c/d", "../../") << endl; // separator at the end will be preserved
+    cout << path::joinPath({"a/b/c/d", "../..", "e/f/g", "h/i/.."}) << endl;
+    cout << path::joinPath({"a/b/c/d", "../..", "e/f/g", "h/i/../"}) << endl; // preserve end separator
 
     return 0;
 }

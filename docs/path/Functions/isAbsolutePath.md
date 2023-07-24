@@ -1,15 +1,15 @@
-## path::absolute
+## path::isAbsolutePath
 Defined in header `path.hpp`
 
 | Declarations |
 | --- |
-| std::string absolute(const std::filesystem::path& path) |
+| bool isAbsolutePath(const std::filesystem::path& path) |
 
 ## Parameters
-`path` - the path to compose an absolute path for
+`path` - the path to check
 
 ## Return Value
-Returns the absolute path of a given relative path.
+`true` if the path is an absolute path, `false` otherwise.
 
 ## Example
 ```
@@ -20,14 +20,15 @@ using namespace std;
 
 int main()
 {
-    cout << path::absolute("foo/bar") << endl;
-
+    cout << path::isAbsolutePath("bin/debug") << endl;
+    cout << path::isAbsolutePath("D:/bin/debug") << endl;
     return 0;
 }
 ```
 Output:
 ```
-D:\Documents\Codes\VS Code\C++\Utility\bin\Debug\foo\bar
+0
+1
 ```
 
 ## References
