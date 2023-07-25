@@ -10,75 +10,6 @@ class Config {
     private:
         std::unordered_map<std::string, std::unordered_map<std::string, std::string>> config;
 
-        static bool hasKey(const std::string& line, const std::string& key)
-        {
-            if(line.empty() || key.empty()) {
-                return false;
-            }
-
-            int i = 0;
-            while(i < line.size() && line[i] == ' ') {
-                i++;
-            }
-
-            if(isQuotation(line[i])) {
-                i++;
-            }
-
-            while(i < line.size()) {
-                if(line[i] == '=') {
-                    return false;
-                }
-
-                if(line[i] == key[0]) {
-                    int j = 0;
-                    while(i < line.size() && j < key.size() && line[i] == key[j]) {
-                        i++;
-                        j++;
-                    }
-
-                    while(i < line.size() && isQuotation(line[i])) {
-                        i++;
-                    }
-                    
-                    if(i >= line.size() && j >= key.size() || (line[i] == ' ' || line[i] == '=') && j >= key.size()) {
-                        return true;
-                    }
-                } else {
-                    i++;
-                }
-            }
-
-            return false;
-        } 
-
-        static std::string trim(const std::string& str)
-        {
-            std::string trimmed;
-            trimmed.reserve(str.size());
-            
-            int i = 0;
-            while(i < str.size() && str[i] == ' ') {
-                i++;
-            }
-
-            while(i < str.size()) {
-                trimmed.push_back(str[i]);
-                i++;
-            }
-
-            while(trimmed.back() == ' ') {
-                trimmed.pop_back();
-            }
-
-            return trimmed;
-        }
-
-        static bool isQuotation(char ch)
-        {
-            return ch == '\'' || ch == '\"';
-        }
-
     public:
         // Constructors
         Config() : config() {}
@@ -89,6 +20,11 @@ class Config {
         }
 
         // Getters
+        const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getConfig()
+        {
+            return config;
+        }
+
         const std::string& getValue(const std::string& key) const
         {
             return config.at("").at(key);
@@ -190,7 +126,7 @@ class Config {
 
         void setConfigToFile(const std::string& config_path)
         {
-            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string>>>> output;
+            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string>>>> temp;
 
             for(const auto& i : config) {
                 std::string section = i.first;
@@ -198,28 +134,28 @@ class Config {
                 for(const auto& j : i.second) {
                      keyval.push_back(std::make_pair(j.first, j.second));
                 }
-                output.push_back(std::make_pair(section, keyval));
+                temp.push_back(std::make_pair(section, keyval));
             }
 
-            std::ofstream file(config_path);
+            std::ofstream output(config_path);
 
-            for(int i = output.size()-1; i >= 0; i--) {
-                if(!output[i].first.empty()) {
-                    file << "[" << output[i].first << "]" << std::endl;
+            for(int i = temp.size()-1; i >= 0; i--) {
+                if(!temp[i].first.empty()) {
+                    output << "[" << temp[i].first << "]" << std::endl;
                 }
 
-                for(int j = output[i].second.size()-1; j >= 0; j--) {
-                    size_t key_space = output[i].second[j].first.find(' ');
-                    size_t value_space = output[i].second[j].second.find(' ');
-                    std::string key = (key_space == std::string::npos ? output[i].second[j].first : "\"" + output[i].second[j].first + "\"");
-                    std::string value = (value_space == std::string::npos ? output[i].second[j].second : "\"" + output[i].second[j].second + "\"");
-                    file << key << " = " << value << std::endl;
+                for(int j = temp[i].second.size()-1; j >= 0; j--) {
+                    size_t key_space = temp[i].second[j].first.find(' ');
+                    size_t value_space = temp[i].second[j].second.find(' ');
+                    std::string key = (key_space == std::string::npos ? temp[i].second[j].first : "\"" + temp[i].second[j].first + "\"");
+                    std::string value = (value_space == std::string::npos ? temp[i].second[j].second : "\"" + temp[i].second[j].second + "\"");
+                    output << key << " = " << value << std::endl;
                 }
 
-                file << std::endl;
+                output << std::endl;
             }
 
-            file.close();
+            output.close();
         }
 
         // Modifiers
@@ -228,14 +164,24 @@ class Config {
             config.insert({new_section, std::unordered_map<std::string, std::string>()});
         }
 
-        void addKey(const std::string& new_key, const std::string& new_value = "")
+        void addKey(const std::string& new_key)
         {
-            addKey("", new_key, new_value);
+            addKey("", new_key);
         }
 
-        void addKey(const std::string& section, const std::string& new_key, const std::string& new_value = "")
+        void addKey(const std::string& section, const std::string& new_key)
         {
-            config.at(section).insert({new_key, new_value});
+            config.at(section).insert({new_key, ""});
+        }
+
+        void addKeyValue(const std::string& new_key, const std::string& new_val)
+        {
+            addKeyValue("", new_key, new_val);
+        }
+
+        void addKeyValue(const std::string& section, const std::string& new_key, const std::string& new_val)
+        {
+            config.at(section).insert({new_key, new_val});
         }
 
         void removeSection(const std::string& section)
@@ -280,5 +226,31 @@ class Config {
         void modifyKeyValue(const std::string& section, const std::string& key, const std::string& new_val)
         {
             config.at(section)[key] = new_val;
+        }
+
+        // Checkers
+        bool doesSectionExist(const std::string& section)
+        {
+            return config.count(section) > 0;
+        }
+
+        bool doesKeyExist(const std::string& key)
+        {
+            return config.at("").count(key) > 0;
+        }
+
+        bool doesKeyExist(const std::string& section, const std::string& key)
+        {
+            return config.at(section).count(key) > 0;
+        }
+
+        bool doesKeyHaveValue(const std::string& key)
+        {
+            return !config.at("").at(key).empty();
+        }
+
+        bool doesKeyHaveValue(const std::string& section, const std::string& key)
+        {
+            return !config.at(section).at(key).empty();
         }
 };
