@@ -1,7 +1,7 @@
 # Comment
-key1=val1
+key1=cookie
 key2 = val2   # some commment
-"key 3" = val3
+"key 3" = cookie
 key4 = "val 4"
 "key 5" = "val 5"
 
@@ -9,12 +9,12 @@ key4 = "val 4"
 key1=val1
 key2 = val2   # some commment
 "key 3" = val3
-key4 = "val4"
-"key 5" = "val 5"
+key4 = "my cookie"
+"key 5" = "my cookie"
 
 [Section 2]
 key1=val1
 key2 = val2   # some commment
 "key 3" = val3
 key4 = "val 4"
-"key 5" = "val 5"
+"key 5" = "cookie monster"

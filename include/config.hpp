@@ -101,6 +101,7 @@ class Config {
         // Setters
         void setConfig(const std::string& config_path)
         {
+            config.clear();
             std::ifstream file(config_path);
             std::string temp;
 
@@ -187,6 +188,30 @@ class Config {
         }
 
         // Modifiers
+        static bool modifySectionInFile(const std::string& config_path, const std::string& section, const std::string& new_section)
+        {
+            std::ifstream input(config_path);
+
+            if(!input.is_open()) {
+                throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
+            }
+
+            std::string line;
+            while(getline(input, line)) {
+                
+            }
+        }
+
+        static bool modifyKeyInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
+        {
+            return true;
+        }
+
+        static bool modifyKeyInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
+        {
+            return true;
+        }
+
         static bool modifyValueInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
         {
             std::ifstream input(config_path);

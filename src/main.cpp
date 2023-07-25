@@ -1,5 +1,6 @@
 #include <iostream>
 #include "path.hpp"
+#include "config.hpp"
 
 int main()
 {
