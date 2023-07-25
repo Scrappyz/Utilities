@@ -89,12 +89,12 @@ class Config {
         }
 
         // Getters
-        const std::string& getValueOf(const std::string& key) const
+        const std::string& getValue(const std::string& key) const
         {
             return config.at("").at(key);
         }
 
-        const std::string& getValueOf(const std::string& section, const std::string& key) const
+        const std::string& getValue(const std::string& section, const std::string& key) const
         {
             return config.at(section).at(key);
         }
@@ -201,13 +201,6 @@ class Config {
                 output.push_back(std::make_pair(section, keyval));
             }
 
-            // for(int i = 0; i < output.size(); i++) {
-            //     std::cout << output[i].first << std::endl;
-            //     for(int j = 0; j < output[i].second.size(); j++) {
-            //         std::cout << output[i].second[j].first << " = " << output[i].second[j].second << std::endl;
-            //     }
-            // }
-
             std::ofstream file(config_path);
 
             for(int i = output.size()-1; i >= 0; i--) {
@@ -222,150 +215,70 @@ class Config {
                     std::string value = (value_space == std::string::npos ? output[i].second[j].second : "\"" + output[i].second[j].second + "\"");
                     file << key << " = " << value << std::endl;
                 }
-                
+
                 file << std::endl;
             }
+
+            file.close();
         }
 
         // Modifiers
-        // static bool modifySectionInFile(const std::string& config_path, const std::string& section, const std::string& new_section)
-        // {
-        //     std::ifstream input(config_path);
+        void addSection(const std::string& new_section)
+        {
+            config.insert({new_section, std::unordered_map<std::string, std::string>()});
+        }
 
-        //     if(!input.is_open()) {
-        //         throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
-        //     }
+        void addKey(const std::string& new_key, const std::string& new_value = "")
+        {
+            addKey("", new_key, new_value);
+        }
 
-        //     std::string line;
-        //     while(getline(input, line)) {
-                
-        //     }
-        // }
+        void addKey(const std::string& section, const std::string& new_key, const std::string& new_value = "")
+        {
+            config.at(section).insert({new_key, new_value});
+        }
 
-        // static bool modifyKeyInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
-        // {
-        //     return true;
-        // }
+        void removeSection(const std::string& section)
+        {
+            config.erase(section);
+        }
 
-        // static bool modifyKeyInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
-        // {
-        //     return true;
-        // }
+        void removeKey(const std::string& key)
+        {
+            removeKey("", key);
+        }
 
-        // static bool modifyValueInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
-        // {
-        //     std::ifstream input(config_path);
+        void removeKey(const std::string& section, const std::string& key)
+        {
+            config.at(section).erase(key);
+        }
 
-        //     if(!input.is_open()) {
-        //         throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
-        //     }
+        void modifySectionName(const std::string& section, const std::string& new_section)
+        {
+            std::unordered_map<std::string, std::string> keys = config.at(section);
+            config.erase(section);
+            config.insert({new_section, keys});
+        }
 
-        //     std::vector<std::string> data;
-        //     std::string line;
-        //     std::string current_section;
-        //     bool new_val_has_space = (new_val.find(' ') != std::string::npos);
-        //     bool return_val = false;
-        //     while(getline(input, line)) {
-        //         line = trim(line);
+        void modifyKeyName(const std::string& key, const std::string& new_key)
+        {
+            modifyKeyName("", key, new_key);
+        }
 
-        //         if(line.empty()) {
-        //             data.push_back("");
-        //             continue;
-        //         }
+        void modifyKeyName(const std::string& section, const std::string& key, const std::string& new_key)
+        {
+            std::string value = config.at(section).at(key);
+            config.at(section).erase(key);
+            config.at(section).insert({new_key, value});
+        }
 
-        //         int i = 0;
+        void modifyKeyValue(const std::string& key, const std::string& new_val)
+        {
+            modifyKeyValue("", key, new_val);
+        }
 
-        //         if(line[i] == '#') { // if comment, add it to data
-        //             data.push_back(line);
-        //             continue;
-        //         }
-
-        //         if(line[i] == '[') { // if section
-        //             current_section.clear();
-        //             i++;
-        //             while(i < line.size() && line[i] != ']') {
-        //                 current_section.push_back(line[i]);
-        //                 i++;
-        //             }
-        //             data.push_back("[" + current_section + "]");
-        //             continue;
-        //         }
-
-        //         if(current_section != section) { // do not modify if it is not the given section
-        //             data.push_back(line);
-        //             continue;
-        //         }
-
-        //         // check if the given key is in the current line
-        //         if(hasKey(line, key)) {
-        //             std::string keyval;
-        //             if(isQuotation(line[i])) { // skip quotation
-        //                 keyval.push_back(line[i]);
-        //                 i++;
-        //             }
-
-        //             keyval.append(key);
-        //             i += key.size();
-
-        //             if(isQuotation(line[i])) { // skip quotation
-        //                 keyval.push_back(line[i]);
-        //                 i++;
-        //             }
-
-        //             while(i < line.size() && (line[i] == ' ' || line[i] == '=')) { // append the assign operator
-        //                 keyval.push_back(line[i]);
-        //                 i++;
-        //             }
-
-        //             if(new_val_has_space) { // add quotation to value if there are spaces
-        //                 keyval.append("\"" + new_val + "\"");
-        //             } else {
-        //                 keyval.append(new_val);
-        //             }
-
-        //             int spaces = 0;
-        //             while(i < line.size() && line[i] != '#') { // count spaces beyond value
-        //                 if(line[i] == ' ') {
-        //                     spaces++;
-        //                 } else {
-        //                     spaces = 0;
-        //                 }
-        //                 i++;
-        //             }
-
-        //             if(i >= line.size()) {
-        //                 data.push_back(keyval);
-        //                 return_val = true;
-        //                 continue;
-        //             }
-
-        //             keyval.append(std::string(spaces, ' '));
-
-        //             while(i < line.size()) {
-        //                 keyval.push_back(line[i]);
-        //                 i++;
-        //             }
-
-        //             data.push_back(keyval);
-        //             return_val = true;
-        //         } else {
-        //             data.push_back(line);
-        //         }
-        //     }
-
-        //     input.close();
-
-        //     std::ofstream output(config_path);
-        //     for(int i = 0; i < data.size(); i++) {
-        //         output << data[i] << std::endl;
-        //     }
-        //     output.close();
-
-        //     return return_val;
-        // }
-
-        // static bool modifyValueInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
-        // {
-        //     return modifyValueInFile(config_path, "", key, new_val);
-        // }
+        void modifyKeyValue(const std::string& section, const std::string& key, const std::string& new_val)
+        {
+            config.at(section)[key] = new_val;
+        }
 };
