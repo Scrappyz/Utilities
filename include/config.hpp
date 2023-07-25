@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <fstream>
+#include <iostream>
 
 class Config {
     private:
@@ -187,145 +188,184 @@ class Config {
             }
         }
 
-        // Modifiers
-        static bool modifySectionInFile(const std::string& config_path, const std::string& section, const std::string& new_section)
+        void setConfigToFile(const std::string& config_path)
         {
-            std::ifstream input(config_path);
+            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string>>>> output;
 
-            if(!input.is_open()) {
-                throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
+            for(const auto& i : config) {
+                std::string section = i.first;
+                std::vector<std::pair<std::string, std::string>> keyval;
+                for(const auto& j : i.second) {
+                     keyval.push_back(std::make_pair(j.first, j.second));
+                }
+                output.push_back(std::make_pair(section, keyval));
             }
 
-            std::string line;
-            while(getline(input, line)) {
+            // for(int i = 0; i < output.size(); i++) {
+            //     std::cout << output[i].first << std::endl;
+            //     for(int j = 0; j < output[i].second.size(); j++) {
+            //         std::cout << output[i].second[j].first << " = " << output[i].second[j].second << std::endl;
+            //     }
+            // }
+
+            std::ofstream file(config_path);
+
+            for(int i = output.size()-1; i >= 0; i--) {
+                if(!output[i].first.empty()) {
+                    file << "[" << output[i].first << "]" << std::endl;
+                }
+
+                for(int j = output[i].second.size()-1; j >= 0; j--) {
+                    size_t key_space = output[i].second[j].first.find(' ');
+                    size_t value_space = output[i].second[j].second.find(' ');
+                    std::string key = (key_space == std::string::npos ? output[i].second[j].first : "\"" + output[i].second[j].first + "\"");
+                    std::string value = (value_space == std::string::npos ? output[i].second[j].second : "\"" + output[i].second[j].second + "\"");
+                    file << key << " = " << value << std::endl;
+                }
                 
+                file << std::endl;
             }
         }
 
-        static bool modifyKeyInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
-        {
-            return true;
-        }
+        // Modifiers
+        // static bool modifySectionInFile(const std::string& config_path, const std::string& section, const std::string& new_section)
+        // {
+        //     std::ifstream input(config_path);
 
-        static bool modifyKeyInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
-        {
-            return true;
-        }
+        //     if(!input.is_open()) {
+        //         throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
+        //     }
 
-        static bool modifyValueInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
-        {
-            std::ifstream input(config_path);
+        //     std::string line;
+        //     while(getline(input, line)) {
+                
+        //     }
+        // }
 
-            if(!input.is_open()) {
-                throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
-            }
+        // static bool modifyKeyInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
+        // {
+        //     return true;
+        // }
 
-            std::vector<std::string> data;
-            std::string line;
-            std::string current_section;
-            bool new_val_has_space = (new_val.find(' ') != std::string::npos);
-            bool return_val = false;
-            while(getline(input, line)) {
-                line = trim(line);
+        // static bool modifyKeyInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
+        // {
+        //     return true;
+        // }
 
-                if(line.empty()) {
-                    data.push_back("");
-                    continue;
-                }
+        // static bool modifyValueInFile(const std::string& config_path, const std::string& section, const std::string& key, const std::string& new_val)
+        // {
+        //     std::ifstream input(config_path);
 
-                int i = 0;
+        //     if(!input.is_open()) {
+        //         throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
+        //     }
 
-                if(line[i] == '#') { // if comment, add it to data
-                    data.push_back(line);
-                    continue;
-                }
+        //     std::vector<std::string> data;
+        //     std::string line;
+        //     std::string current_section;
+        //     bool new_val_has_space = (new_val.find(' ') != std::string::npos);
+        //     bool return_val = false;
+        //     while(getline(input, line)) {
+        //         line = trim(line);
 
-                if(line[i] == '[') { // if section
-                    current_section.clear();
-                    i++;
-                    while(i < line.size() && line[i] != ']') {
-                        current_section.push_back(line[i]);
-                        i++;
-                    }
-                    data.push_back("[" + current_section + "]");
-                    continue;
-                }
+        //         if(line.empty()) {
+        //             data.push_back("");
+        //             continue;
+        //         }
 
-                if(current_section != section) { // do not modify if it is not the given section
-                    data.push_back(line);
-                    continue;
-                }
+        //         int i = 0;
 
-                // check if the given key is in the current line
-                if(hasKey(line, key)) {
-                    std::string keyval;
-                    if(isQuotation(line[i])) { // skip quotation
-                        keyval.push_back(line[i]);
-                        i++;
-                    }
+        //         if(line[i] == '#') { // if comment, add it to data
+        //             data.push_back(line);
+        //             continue;
+        //         }
 
-                    keyval.append(key);
-                    i += key.size();
+        //         if(line[i] == '[') { // if section
+        //             current_section.clear();
+        //             i++;
+        //             while(i < line.size() && line[i] != ']') {
+        //                 current_section.push_back(line[i]);
+        //                 i++;
+        //             }
+        //             data.push_back("[" + current_section + "]");
+        //             continue;
+        //         }
 
-                    if(isQuotation(line[i])) { // skip quotation
-                        keyval.push_back(line[i]);
-                        i++;
-                    }
+        //         if(current_section != section) { // do not modify if it is not the given section
+        //             data.push_back(line);
+        //             continue;
+        //         }
 
-                    while(i < line.size() && (line[i] == ' ' || line[i] == '=')) { // append the assign operator
-                        keyval.push_back(line[i]);
-                        i++;
-                    }
+        //         // check if the given key is in the current line
+        //         if(hasKey(line, key)) {
+        //             std::string keyval;
+        //             if(isQuotation(line[i])) { // skip quotation
+        //                 keyval.push_back(line[i]);
+        //                 i++;
+        //             }
 
-                    if(new_val_has_space) { // add quotation to value if there are spaces
-                        keyval.append("\"" + new_val + "\"");
-                    } else {
-                        keyval.append(new_val);
-                    }
+        //             keyval.append(key);
+        //             i += key.size();
 
-                    int spaces = 0;
-                    while(i < line.size() && line[i] != '#') { // count spaces beyond value
-                        if(line[i] == ' ') {
-                            spaces++;
-                        } else {
-                            spaces = 0;
-                        }
-                        i++;
-                    }
+        //             if(isQuotation(line[i])) { // skip quotation
+        //                 keyval.push_back(line[i]);
+        //                 i++;
+        //             }
 
-                    if(i >= line.size()) {
-                        data.push_back(keyval);
-                        return_val = true;
-                        continue;
-                    }
+        //             while(i < line.size() && (line[i] == ' ' || line[i] == '=')) { // append the assign operator
+        //                 keyval.push_back(line[i]);
+        //                 i++;
+        //             }
 
-                    keyval.append(std::string(spaces, ' '));
+        //             if(new_val_has_space) { // add quotation to value if there are spaces
+        //                 keyval.append("\"" + new_val + "\"");
+        //             } else {
+        //                 keyval.append(new_val);
+        //             }
 
-                    while(i < line.size()) {
-                        keyval.push_back(line[i]);
-                        i++;
-                    }
+        //             int spaces = 0;
+        //             while(i < line.size() && line[i] != '#') { // count spaces beyond value
+        //                 if(line[i] == ' ') {
+        //                     spaces++;
+        //                 } else {
+        //                     spaces = 0;
+        //                 }
+        //                 i++;
+        //             }
 
-                    data.push_back(keyval);
-                    return_val = true;
-                } else {
-                    data.push_back(line);
-                }
-            }
+        //             if(i >= line.size()) {
+        //                 data.push_back(keyval);
+        //                 return_val = true;
+        //                 continue;
+        //             }
 
-            input.close();
+        //             keyval.append(std::string(spaces, ' '));
 
-            std::ofstream output(config_path);
-            for(int i = 0; i < data.size(); i++) {
-                output << data[i] << std::endl;
-            }
-            output.close();
+        //             while(i < line.size()) {
+        //                 keyval.push_back(line[i]);
+        //                 i++;
+        //             }
 
-            return return_val;
-        }
+        //             data.push_back(keyval);
+        //             return_val = true;
+        //         } else {
+        //             data.push_back(line);
+        //         }
+        //     }
 
-        static bool modifyValueInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
-        {
-            return modifyValueInFile(config_path, "", key, new_val);
-        }
+        //     input.close();
+
+        //     std::ofstream output(config_path);
+        //     for(int i = 0; i < data.size(); i++) {
+        //         output << data[i] << std::endl;
+        //     }
+        //     output.close();
+
+        //     return return_val;
+        // }
+
+        // static bool modifyValueInFile(const std::string& config_path, const std::string& key, const std::string& new_val)
+        // {
+        //     return modifyValueInFile(config_path, "", key, new_val);
+        // }
 };

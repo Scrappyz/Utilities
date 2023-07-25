@@ -4,9 +4,9 @@
 
 int main()
 {
-    std::string path = path::joinPath(path::sourcePath(), "../../test/test_path/path");
-    std::cout << path << std::endl;
-    path = path::parentPath(path, 2);
-    std::cout << path << std::endl;
+    std::string path = path::joinPath(path::sourcePath(), "../../test/test_path/config/config.txt");
+    Config config(path);
+    config.setConfigToFile(path::currentPath() + "/template.txt");
+    
     return 0;
 }

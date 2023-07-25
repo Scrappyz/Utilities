@@ -28,3 +28,8 @@ TEST(getValueOf, general)
     EXPECT_EQ(config.getValueOf("Section 2", "key 5"), "val 5");
 
 }
+
+TEST(modifyValueInFile, general)
+{
+    std::string config_path = path::joinPath(test_path, "test.txt");
+}
