@@ -54,6 +54,7 @@ Defined in namespace `path`
 | [joinPath](Functions/joinPath.md) | concatenates two or more paths together |
 | [move](Functions/move.md) | moves a file or directory |
 | [open](Functions/open.md) | open a file with a program |
+| [parentPath](Functions/parentPath.md) | returns the parent directory of a path |
 | [relativePath](Functions/relativePath.md) | returns a path relative to another path |
 | [rename](Functions/rename.md) | renames a file or directory |
 | [rootName](Functions/rootName.md) | returns the name of the root |

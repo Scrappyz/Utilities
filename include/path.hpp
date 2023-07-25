@@ -156,6 +156,15 @@ namespace path {
         return std::filesystem::relative(path, base_path).string();
     }
 
+    inline std::string parentPath(std::filesystem::path path, int pop = 1)
+    {
+        for(int i = 1; i <= pop; i++) {
+            path = path.parent_path();
+        }
+
+        return path.string();
+    }
+
     inline std::string joinPath(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
         std::string result;
