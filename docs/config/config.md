@@ -77,7 +77,7 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [getValueOf](Methods/getValueOf.md) | returns the value of the key in the given section |
+| [getValueOf](Getters/getValueOf.md) | returns the value of the key in the given section |
 
 ## Setters
 Defined in header `config.hpp`
@@ -91,7 +91,37 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [modifyValueInFile](Methods/modifyValueInFile.md) | modifies the value of the given section and key in a config file <br> (static) |
+| [addSection]() | add a new section |
+| [addKey]() | add a new key |
+| [addKeyValue]() | add a new key with a value |
+| [removeSection]() | remove a section along with its keys |
+| [removeKey]() | remove a key from a section |
+| [modifySectionName]() | modify the name of a section |
+| [modifyKeyName]() | modify the name of a key from a section |
+| [modifyKeyValue]() | modify the value of a key from a section |
+
+## Checkers
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [doesSectionExist]() | checks if a section exists |
+| [doesKeyExist]() | checks if a key exists in a section |
+| [doesKeyHaveValue]() | checks if a key has a value |
+
+## File Handling
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [writeConfigToFile]() | write the contents of the `Config` object to a file |
+
+## Operators
+Defined in header `config.hpp`
+
+| | |
+| --- | --- |
+| [operator==]() | checks for equality |
 
 
 

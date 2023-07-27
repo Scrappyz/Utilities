@@ -4,10 +4,9 @@
 #include <vector>
 #include <unordered_map>
 #include <fstream>
-#include <iostream>
 
 class Config {
-    private:
+    protected:
         std::unordered_map<std::string, std::unordered_map<std::string, std::string>> config;
 
     public:

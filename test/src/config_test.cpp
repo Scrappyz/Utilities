@@ -5,6 +5,17 @@
 std::string test_path = path::joinPath(path::sourcePath(), "../test_path/config");
 std::string config_path = path::joinPath(test_path, "config.txt");
 
+class ConfigTest : public Config {
+    public:
+        ConfigTest() : Config() {}
+        ConfigTest(const std::string& config_path) : Config(config_path) {}
+
+        const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getConfig() const
+        {
+            return config;
+        }
+};
+
 std::vector<std::string> getFileContent(const std::string& path)
 {
     std::vector<std::string> v;
@@ -54,14 +65,14 @@ TEST(setConfig, general)
         {"Section 1", std::unordered_map<std::string, std::string>({{"key1", "val1"}, {"key2", "val2"}, {"key 3", "val3"}, {"key4", "val 4"}, {"key 5", "val 5"}})},
         {"Section 2", std::unordered_map<std::string, std::string>({{"key1", "val1"}, {"key2", "val2"}, {"key 3", "val3"}, {"key4", "val 4"}, {"key 5", "val 5"}})}
     };
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     EXPECT_EQ(config.getConfig(), expected_config);
 }
 
 TEST(writeConfigToFile, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
     config.removeKey("key1");
     config.removeKey("Section 1", "key1");
     config.removeKey("Section 2", "key1");
@@ -72,14 +83,14 @@ TEST(writeConfigToFile, general)
 
     config.writeConfigToFile(path::joinPath(test_path, "actual.txt"));
 
-    Config expected_config(path::joinPath(test_path, "expected.txt"));
-    Config actual_config(path::joinPath(test_path, "actual.txt"));
+    ConfigTest expected_config(path::joinPath(test_path, "expected.txt"));
+    ConfigTest actual_config(path::joinPath(test_path, "actual.txt"));
     EXPECT_EQ(expected_config, actual_config);
 }
 
 TEST(getValue, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     EXPECT_EQ(config.getValue("key1"), "val1");
     EXPECT_EQ(config.getValue("key2"), "val2");
@@ -103,7 +114,7 @@ TEST(getValue, general)
 
 TEST(addSection, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     EXPECT_EQ(config.doesSectionExist("bobo"), false);
     config.addSection("bobo");
@@ -112,7 +123,7 @@ TEST(addSection, general)
 
 TEST(addKey, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     EXPECT_EQ(config.doesKeyExist("poo"), false);
     config.addKey("poo");
@@ -125,7 +136,7 @@ TEST(addKey, general)
 
 TEST(addKeyValue, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     EXPECT_EQ(config.doesKeyExist("poo") && config.doesKeyHaveValue("poo"), false);
     config.addKeyValue("poo", "amp");
@@ -138,7 +149,7 @@ TEST(addKeyValue, general)
 
 TEST(removeSection, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     EXPECT_EQ(config.doesSectionExist("Seggs"), false);
     config.addSection("Seggs");
@@ -151,7 +162,7 @@ TEST(removeSection, general)
 
 TEST(removeKey, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     config.addSection("Seggs");
     config.addKeyValue("Seggs", "ex", "shit");
@@ -162,7 +173,7 @@ TEST(removeKey, general)
 
 TEST(modifySectionName, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     config.addSection("Seggs");
     EXPECT_EQ(config.doesSectionExist("Seggs") && !config.doesSectionExist("axe"), true);
@@ -172,7 +183,7 @@ TEST(modifySectionName, general)
 
 TEST(modifyKeyName, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     config.addKey("Barbie");
     EXPECT_EQ(config.doesKeyExist("Barbie") && !config.doesKeyExist("Ken"), true);
@@ -182,7 +193,7 @@ TEST(modifyKeyName, general)
 
 TEST(modifyKeyValue, general)
 {
-    Config config(config_path);
+    ConfigTest config(config_path);
 
     config.addKeyValue("Oppenheimer", "Nuke");
     EXPECT_EQ(config.getValue("Oppenheimer"), "Nuke");
