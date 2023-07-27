@@ -1,14 +1,14 @@
-## Config::addSection
+## Config::removeSection
 Defined in header `config.hpp`
 
 | |
 | --- |
-| void addSection(const std::string& new_section) |
+| void removeSection(const std::string& section) |
 
-Adds a new section.
+Removes an existing section.
 
 ## Parameters
-`new_section` - the section to add
+`section` - the section to remove
 
 ## Example
 ```
@@ -23,12 +23,15 @@ int main()
     std::cout << config.doesSectionExist("new section") << std::endl;
     config.addSection("new section");
     std::cout << config.doesSectionExist("new section") << std::endl;
+    config.removeSection("new section");
+    std::cout << config.doesSectionExist("new section") << std::endl;
+
     return 0;
 }
 ```
-
 Output:
 ```
 0
 1
+0
 ```

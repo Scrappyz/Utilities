@@ -91,14 +91,14 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [addSection]() | add a new section |
-| [addKey]() | add a new key |
-| [addKeyValue]() | add a new key with a value |
-| [removeSection]() | remove a section along with its keys |
-| [removeKey]() | remove a key from a section |
-| [modifySectionName]() | modify the name of a section |
-| [modifyKeyName]() | modify the name of a key from a section |
-| [modifyKeyValue]() | modify the value of a key from a section |
+| [addSection](Modifiers/addSection.md) | add a new section |
+| [addKey](Modifiers/addKey.md) | add a new key |
+| [addKeyValue](Modifiers/addKeyValue.md) | add a new key with a value |
+| [removeSection](Modifiers/removeSection.md) | remove a section along with its keys |
+| [removeKey](Modifiers/removeKey.md) | remove a key from a section |
+| [modifySectionName](Modifiers/modifySectionName.md) | modify the name of a section |
+| [modifyKeyName](Modifiers/modifyKeyName.md) | modify the name of a key from a section |
+| [modifyKeyValue](Modifiers/modifyKeyValue.md) | modify the value of a key from a section |
 
 ## Checkers
 Defined in header `config.hpp`

@@ -19,11 +19,6 @@ class Config {
         }
 
         // Getters
-        const std::unordered_map<std::string, std::unordered_map<std::string, std::string>>& getConfig()
-        {
-            return config;
-        }
-
         const std::string& getValue(const std::string& key) const
         {
             return config.at("").at(key);
@@ -38,6 +33,7 @@ class Config {
         void setConfig(const std::string& config_path)
         {
             config.clear();
+            config.insert({"", std::unordered_map<std::string, std::string>()});
             std::ifstream file(config_path);
             std::string temp;
 
@@ -196,27 +192,27 @@ class Config {
         }
 
         // Checkers
-        bool doesSectionExist(const std::string& section)
+        bool doesSectionExist(const std::string& section) const
         {
             return config.count(section) > 0;
         }
 
-        bool doesKeyExist(const std::string& key)
+        bool doesKeyExist(const std::string& key) const
         {
             return config.at("").count(key) > 0;
         }
 
-        bool doesKeyExist(const std::string& section, const std::string& key)
+        bool doesKeyExist(const std::string& section, const std::string& key) const
         {
             return config.at(section).count(key) > 0;
         }
 
-        bool doesKeyHaveValue(const std::string& key)
+        bool doesKeyHaveValue(const std::string& key) const 
         {
             return !config.at("").at(key).empty();
         }
 
-        bool doesKeyHaveValue(const std::string& section, const std::string& key)
+        bool doesKeyHaveValue(const std::string& section, const std::string& key) const
         {
             return !config.at(section).at(key).empty();
         }
