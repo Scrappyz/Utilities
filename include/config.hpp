@@ -74,88 +74,56 @@ class Config {
                     if(config.count(section) < 1) {
                         config.insert({section, std::unordered_map<std::string, std::string>()});
                     }
-                } else {
-                    bool is_string = false;
-                    if(temp[i] == '"' || temp[i] == '\'') {
-                        is_string = true;
-                        i++;
-                    } 
 
-                    while(i < temp.size()) {
-                        if(!is_string && temp[i] == ' ' || (temp[i] == '\"' || temp[i] == '\'' || temp[i] == '=')) {
-                            break;
-                        }
-                        key.push_back(temp[i]);
-                        i++;
-                    }
+                    continue;
+                }
 
-                    while(i < temp.size() && temp[i] != '=') { // move to '='
-                        i++;
-                    }
-
-                    if(i >= temp.size()) { // is not a key value pair
-                        continue;
-                    }
+                bool is_string = false;
+                if(temp[i] == '"' || temp[i] == '\'') {
+                    is_string = true;
                     i++;
+                } 
 
-                    while(i < temp.size() && temp[i] == ' ') { // skip whitespaces
-                        i++;
+                while(i < temp.size()) {
+                    if(!is_string && temp[i] == ' ' || (temp[i] == '\"' || temp[i] == '\'' || temp[i] == '=')) {
+                        break;
                     }
-
-                    is_string = false;
-                    if(temp[i] == '"' || temp[i] == '\'') {
-                        is_string = true;
-                        i++;
-                    }
-
-                    while(i < temp.size()) {
-                        if(!is_string && temp[i] == ' ' || (temp[i] == '\"' || temp[i] == '\'')) {
-                            break;
-                        }
-                        value.push_back(temp[i]);
-                        i++;
-                    }
-
-                    if(config.count(section) < 1) {
-                        config.insert({section, std::unordered_map<std::string, std::string>()});
-                    }
-                    config.at(section).insert({key, value});
+                    key.push_back(temp[i]);
+                    i++;
                 }
+
+                while(i < temp.size() && temp[i] != '=') { // move to '='
+                    i++;
+                }
+
+                if(i >= temp.size()) { // is not a key value pair
+                    continue;
+                }
+                i++;
+
+                while(i < temp.size() && temp[i] == ' ') { // skip whitespaces
+                    i++;
+                }
+
+                is_string = false;
+                if(temp[i] == '"' || temp[i] == '\'') {
+                    is_string = true;
+                    i++;
+                }
+
+                while(i < temp.size()) {
+                    if(!is_string && temp[i] == ' ' || (temp[i] == '\"' || temp[i] == '\'')) {
+                        break;
+                    }
+                    value.push_back(temp[i]);
+                    i++;
+                }
+
+                if(config.count(section) < 1) {
+                    config.insert({section, std::unordered_map<std::string, std::string>()});
+                }
+                config.at(section).insert({key, value});
             }
-        }
-
-        void setConfigToFile(const std::string& config_path)
-        {
-            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string>>>> temp;
-
-            for(const auto& i : config) {
-                std::string section = i.first;
-                std::vector<std::pair<std::string, std::string>> keyval;
-                for(const auto& j : i.second) {
-                     keyval.push_back(std::make_pair(j.first, j.second));
-                }
-                temp.push_back(std::make_pair(section, keyval));
-            }
-
-            std::ofstream output(config_path);
-
-            for(int i = temp.size()-1; i >= 0; i--) {
-                if(!temp[i].first.empty()) {
-                    output << "[" << temp[i].first << "]" << std::endl;
-                }
-
-                for(int j = temp[i].second.size()-1; j >= 0; j--) {
-                    size_t key_space = temp[i].second[j].first.find(' ');
-                    size_t value_space = temp[i].second[j].second.find(' ');
-                    std::string key = (key_space == std::string::npos ? temp[i].second[j].first : "\"" + temp[i].second[j].first + "\"");
-                    std::string value = (value_space == std::string::npos ? temp[i].second[j].second : "\"" + temp[i].second[j].second + "\"");
-                    output << key << " = " << value << std::endl;
-                }
-
-                output << std::endl;
-            }
-
-            output.close();
         }
 
         // Modifiers
@@ -252,5 +220,40 @@ class Config {
         bool doesKeyHaveValue(const std::string& section, const std::string& key)
         {
             return !config.at(section).at(key).empty();
+        }
+
+        // File Handling
+        void writeConfigToFile(const std::string& config_path) const
+        {
+            std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string>>>> temp;
+
+            for(const auto& i : config) {
+                std::string section = i.first;
+                std::vector<std::pair<std::string, std::string>> keyval;
+                for(const auto& j : i.second) {
+                     keyval.push_back(std::make_pair(j.first, j.second));
+                }
+                temp.push_back(std::make_pair(section, keyval));
+            }
+
+            std::ofstream output(config_path);
+
+            for(int i = temp.size()-1; i >= 0; i--) {
+                if(!temp[i].first.empty()) {
+                    output << "[" << temp[i].first << "]" << std::endl;
+                }
+
+                for(int j = temp[i].second.size()-1; j >= 0; j--) {
+                    size_t key_space = temp[i].second[j].first.find(' ');
+                    size_t value_space = temp[i].second[j].second.find(' ');
+                    std::string key = (key_space == std::string::npos ? temp[i].second[j].first : "\"" + temp[i].second[j].first + "\"");
+                    std::string value = (value_space == std::string::npos ? temp[i].second[j].second : "\"" + temp[i].second[j].second + "\"");
+                    output << key << " = " << value << std::endl;
+                }
+
+                output << std::endl;
+            }
+
+            output.close();
         }
 };

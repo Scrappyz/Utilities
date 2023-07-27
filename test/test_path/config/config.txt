@@ -1,21 +1,21 @@
 []
 key1 = val1
 key2 = val2
-"key 3" = val3
+"key 3" = val3 hello
 key4 = "val 4"
 "key 5" = "val 5"
 
 [Section 1]
-key1 = val1
-key2 = val2
+key1 = val1  # comment
+key2 = val2   shi
 "key 3" = val3
 key4 = "val 4"
 "key 5" = "val 5"
 
 [Section 2]
 key1 = val1
-key2 = val2
+key2   =  val2
 "key 3" = val3
 key4 = "val 4"
-"key 5" = "val 5"
+"key 5" =   "val 5"
 

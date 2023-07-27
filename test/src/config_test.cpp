@@ -76,3 +76,56 @@ TEST(addKeyValue, general)
     EXPECT_EQ(config.doesKeyExist("Section 1", "poo") && config.doesKeyHaveValue("Section 1", "poo"), true);
 }
 
+TEST(removeSection, general)
+{
+    Config config(config_path);
+
+    EXPECT_EQ(config.doesSectionExist("Seggs"), false);
+    config.addSection("Seggs");
+    EXPECT_EQ(config.doesSectionExist("Seggs"), true);
+
+    EXPECT_EQ(config.doesKeyExist("Seggs", "phonk") && config.doesKeyHaveValue("Seggs", "phonk"), false);
+    config.addKeyValue("Seggs", "phonk", "cool");
+    EXPECT_EQ(config.doesKeyExist("Seggs", "phonk") && config.doesKeyHaveValue("Seggs", "phonk"), true);
+}
+
+TEST(removeKey, general)
+{
+    Config config(config_path);
+
+    config.addSection("Seggs");
+    config.addKeyValue("Seggs", "ex", "shit");
+    EXPECT_EQ(config.doesKeyExist("Seggs", "ex"), true);
+    config.removeKey("Seggs", "ex");
+    EXPECT_EQ(config.doesKeyExist("Seggs", "ex"), false);
+}
+
+TEST(modifySectionName, general)
+{
+    Config config(config_path);
+
+    config.addSection("Seggs");
+    EXPECT_EQ(config.doesSectionExist("Seggs") && !config.doesSectionExist("axe"), true);
+    config.modifySectionName("Seggs", "axe");
+    EXPECT_EQ(config.doesSectionExist("axe") && !config.doesSectionExist("Seggs"), true);
+}
+
+TEST(modifyKeyName, general)
+{
+    Config config(config_path);
+
+    config.addKey("Barbie");
+    EXPECT_EQ(config.doesKeyExist("Barbie") && !config.doesKeyExist("Ken"), true);
+    config.modifyKeyName("Barbie", "Ken");
+    EXPECT_EQ(config.doesKeyExist("Ken") && !config.doesKeyExist("Barbie"), true);
+}
+
+TEST(modifyKeyValue, general)
+{
+    Config config(config_path);
+
+    config.addKeyValue("Oppenheimer", "Nuke");
+    EXPECT_EQ(config.getValue("Oppenheimer"), "Nuke");
+    config.modifyKeyValue("Oppenheimer", "BOOM");
+    EXPECT_EQ(config.getValue("Oppenheimer"), "BOOM");
+}
