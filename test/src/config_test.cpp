@@ -5,6 +5,48 @@
 std::string test_path = path::joinPath(path::sourcePath(), "../test_path/config");
 std::string config_path = path::joinPath(test_path, "config.txt");
 
+std::vector<std::string> getFileContent(const std::string& path)
+{
+    std::vector<std::string> v;
+    std::ifstream file(path);
+
+    if(!file.is_open()) {
+        throw std::runtime_error("Cannot open file");
+    }
+
+    std::string line;
+    while(getline(file, line)) {
+        while(line.back() == ' ') {
+            line.pop_back();
+        }
+
+        if(line.empty()) {
+            v.push_back(line);
+            continue;
+        }
+
+        std::string temp;
+
+        int i = 0;
+        while(i < line.size() && line[i] == ' ') { // skip whitespaces
+            i++;
+        }
+
+        if(line[i] == '#') { // is a comment
+            continue;
+        }
+
+        while(i < line.size() && line[i] != '#') {
+            temp.push_back(line[i]);
+            i++;
+        }
+
+        v.push_back(temp);
+    }
+
+    return v;
+}
+
 TEST(setConfig, general)
 {
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> expected_config = {
@@ -15,6 +57,24 @@ TEST(setConfig, general)
     Config config(config_path);
 
     EXPECT_EQ(config.getConfig(), expected_config);
+}
+
+TEST(writeConfigToFile, general)
+{
+    Config config(config_path);
+    config.removeKey("key1");
+    config.removeKey("Section 1", "key1");
+    config.removeKey("Section 2", "key1");
+    config.modifyKeyName("key 3", "forger");
+    config.modifyKeyValue("forger", "sword");
+    config.modifyKeyName("Section 1", "key 3", "mario bros");
+    config.modifyKeyValue("Section 1", "mario bros", "mario & luigi");
+
+    config.writeConfigToFile(path::joinPath(test_path, "actual.txt"));
+
+    Config expected_config(path::joinPath(test_path, "expected.txt"));
+    Config actual_config(path::joinPath(test_path, "actual.txt"));
+    EXPECT_EQ(expected_config, actual_config);
 }
 
 TEST(getValue, general)

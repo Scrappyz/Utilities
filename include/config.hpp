@@ -256,4 +256,10 @@ class Config {
 
             output.close();
         }
+
+        // Operators
+        bool operator==(const Config& config) const
+        {
+            return this->config == config.config;
+        }
 };

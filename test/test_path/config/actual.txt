@@ -1,0 +1,17 @@
+key2 = val2
+key4 = "val 4"
+"key 5" = "val 5"
+forger = sword
+
+[Section 1]
+key2 = val2
+"mario bros" = "mario & luigi"
+key4 = "val 4"
+"key 5" = "val 5"
+
+[Section 2]
+key2 = val2
+"key 3" = val3
+key4 = "val 4"
+"key 5" = "val 5"
+
