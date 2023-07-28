@@ -227,10 +227,16 @@ class Config {
 
             for(const auto& i : config) {
                 std::string section = i.first;
+
+                if(config.at(section).empty()) {
+                    continue;
+                }
+
                 std::vector<std::pair<std::string, std::string>> keyval;
                 for(const auto& j : i.second) {
                      keyval.push_back(std::make_pair(j.first, j.second));
                 }
+                
                 temp.push_back(std::make_pair(section, keyval));
             }
 

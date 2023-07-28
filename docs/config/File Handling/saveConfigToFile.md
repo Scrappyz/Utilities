@@ -1,10 +1,22 @@
+## Config::saveConfigToFile
+Defined in header `config.hpp`
+
+| |
+| --- |
+| void saveConfigToFile(const std::string& config_path) |
+
+Saves the contents of the `Config` object to a file.
+
+## Parameters
+`config_path` - the path to the file where the config will be saved
+
+## Example
+```
 #include <iostream>
-#include "path.hpp"
 #include "config.hpp"
 
 int main()
 {
-    std::string path = path::joinPath(path::sourcePath(), "../../test/test_path/config/config.txt");
     Config config;
 
     config.addKeyValue("main", "main value");
@@ -21,3 +33,17 @@ int main()
     
     return 0;
 }
+```
+
+test.txt:
+```
+main = "main value"
+
+[section 1]
+"key 1" = hello
+key2 = world
+
+[section 2]
+key1 = "some value"
+key2 = "some value"
+```

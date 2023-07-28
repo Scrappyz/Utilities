@@ -57,6 +57,7 @@ int main()
 }
 ```
 First we initialize the `Config` object by passing in the path to the configuration file. Then we can access its values with the method [getValueOf](Methods/getValueOf.md). You can pass a key to it or you can pass both the section and key you are trying to get the value of. \
+<br>
 Using the example in the [format](#format) section, the output would be:
 ```
 val1
@@ -84,7 +85,7 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [setConfig](Methods/setConfig.md) | initializes the `Config` object with the contents of the given configuration file |
+| [setConfigFromFile](Methods/setConfigFromFile.md) | initializes the `Config` object with the contents of the given configuration file |
 
 ## Modifiers
 Defined in header `config.hpp`
@@ -105,23 +106,23 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [doesSectionExist]() | checks if a section exists |
-| [doesKeyExist]() | checks if a key exists in a section |
-| [doesKeyHaveValue]() | checks if a key has a value |
+| [doesSectionExist](Checkers/doesSectionExist.md) | checks if a section exists |
+| [doesKeyExist](Checkers/doesKeyExist.md) | checks if a key exists in a section |
+| [doesKeyHaveValue](Checkers/doesKeyHaveValue.md) | checks if a key has a value |
 
 ## File Handling
 Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [saveConfigToFile]() | save the contents of the `Config` object to a file |
+| [saveConfigToFile](<File Handling/saveConfigToFile.md>) | save the contents of the `Config` object to a file |
 
 ## Operators
 Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [operator==]() | checks for equality |
+| [operator==]() | checks if two `Config` objects are equal |
 
 
 

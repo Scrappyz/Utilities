@@ -1,9 +1,9 @@
-## Config::setConfig
+## Config::setConfigFromFile
 Defined in header `config.hpp`
 
 | |
 | --- |
-| void setConfig(const std::string& config_path) |
+| void setConfigFromFile(const std::string& config_path) |
 
 Initializes the `Config` object with the contents of the given configuration file.
 
