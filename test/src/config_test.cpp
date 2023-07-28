@@ -58,6 +58,18 @@ std::vector<std::string> getFileContent(const std::string& path)
     return v;
 }
 
+TEST(constructor, empty_section_is_available_on_initialization)
+{
+    ConfigTest config;
+    config.addKey("new key");
+    EXPECT_THROW(config.addKey("section 1", "new key"), std::exception);
+    EXPECT_EQ(config.doesKeyExist("new key"), true);
+    
+    ConfigTest config1(config_path);
+    config1.addKey("new key");
+    EXPECT_EQ(config.doesKeyExist("new key"), true);
+}
+
 TEST(setConfig, general)
 {
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> expected_config = {
@@ -70,7 +82,7 @@ TEST(setConfig, general)
     EXPECT_EQ(config.getConfig(), expected_config);
 }
 
-TEST(writeConfigToFile, general)
+TEST(saveConfigToFile, general)
 {
     ConfigTest config(config_path);
     config.removeKey("key1");
@@ -81,7 +93,7 @@ TEST(writeConfigToFile, general)
     config.modifyKeyName("Section 1", "key 3", "mario bros");
     config.modifyKeyValue("Section 1", "mario bros", "mario & luigi");
 
-    config.writeConfigToFile(path::joinPath(test_path, "actual.txt"));
+    config.saveConfigToFile(path::joinPath(test_path, "actual.txt"));
 
     ConfigTest expected_config(path::joinPath(test_path, "expected.txt"));
     ConfigTest actual_config(path::joinPath(test_path, "actual.txt"));

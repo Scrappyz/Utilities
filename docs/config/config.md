@@ -114,7 +114,7 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [writeConfigToFile]() | write the contents of the `Config` object to a file |
+| [saveConfigToFile]() | save the contents of the `Config` object to a file |
 
 ## Operators
 Defined in header `config.hpp`

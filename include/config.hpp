@@ -11,11 +11,14 @@ class Config {
 
     public:
         // Constructors
-        Config() : config() {}
+        Config() : config() 
+        {
+            config.insert({"", std::unordered_map<std::string, std::string>()});
+        }
 
         Config(const std::string& config_path) : config()
         {
-            setConfig(config_path);
+            setConfigFromFile(config_path);
         }
 
         // Getters
@@ -30,7 +33,7 @@ class Config {
         }
 
         // Setters
-        void setConfig(const std::string& config_path)
+        void setConfigFromFile(const std::string& config_path)
         {
             config.clear();
             config.insert({"", std::unordered_map<std::string, std::string>()});
@@ -218,7 +221,7 @@ class Config {
         }
 
         // File Handling
-        void writeConfigToFile(const std::string& config_path) const
+        void saveConfigToFile(const std::string& config_path) const
         {
             std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::string>>>> temp;
 
