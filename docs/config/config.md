@@ -122,7 +122,7 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [operator==]() | checks if two `Config` objects are equal |
+| [operator==](Operators/operator%3D%3D.md) | checks if two `Config` objects are equal |
 
 
 
