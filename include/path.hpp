@@ -483,16 +483,16 @@ namespace path {
                         path::remove(entry.path());
                     }
                 } 
-                
-                if(!from.filename().empty()) {
-                    to = std::filesystem::weakly_canonical(to / from.filename());
-                    std::filesystem::create_directories(to);
-                }
 
                 // store the paths first before copying to prevent endless recursion
                 std::vector<std::filesystem::path> paths;
                 for(const auto& entry : std::filesystem::recursive_directory_iterator(from)) {
                     paths.push_back(path::relativePath(entry.path(), from));
+                }
+
+                if(!from.filename().empty()) {
+                    to = std::filesystem::weakly_canonical(to / from.filename());
+                    std::filesystem::create_directories(to);
                 }
 
                 for(int i = 0; i < paths.size(); i++) {
