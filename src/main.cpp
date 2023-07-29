@@ -3,8 +3,9 @@
 
 int main()
 {
-    std::string path = path::joinPath(path::sourcePath(), "test");
-    path::remove(path);
+    std::string from = path::joinPath(path::sourcePath(), "stuff/");
+    std::string to = path::joinPath(path::sourcePath(), "temp");
+    path::copy(from, to);
     
     return 0;
 }
