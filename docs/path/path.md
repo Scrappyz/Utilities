@@ -56,6 +56,7 @@ Defined in namespace `path`
 | [open](Functions/open.md) | open a file with a program |
 | [parentPath](Functions/parentPath.md) | returns the parent directory of a path |
 | [relativePath](Functions/relativePath.md) | returns a path relative to another path |
+| [remove](Functions/remove.md) | deletes a path |
 | [rename](Functions/rename.md) | renames a file or directory |
 | [rootName](Functions/rootName.md) | returns the name of the root |
 | [sourcePath](Functions/sourcePath.md) | returns the absolute path to the executable |
