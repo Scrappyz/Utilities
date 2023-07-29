@@ -318,7 +318,13 @@ namespace path {
         }
 
         if(std::filesystem::is_directory(path)) {
-            std::filesystem::remove_all(path);
+            if(path.filename().empty()) {
+                for(const auto& entry : std::filesystem::directory_iterator(path)) {
+                    std::filesystem::remove_all(entry.path());
+                }
+            } else {
+                std::filesystem::remove_all(path);
+            }
         } else {
             std::filesystem::remove(path);
         }
