@@ -107,8 +107,10 @@ Defined in header `config.hpp`
 | | |
 | --- | --- |
 | [doesSectionExist](Checkers/doesSectionExist.md) | checks if a section exists |
+| [doesSectionHaveKeys](Checkers/doesSectionHaveKeys.md) | checks if a section has keys |
 | [doesKeyExist](Checkers/doesKeyExist.md) | checks if a key exists in a section |
 | [doesKeyHaveValue](Checkers/doesKeyHaveValue.md) | checks if a key has a value |
+| [isEmpty](Checkers/isEmpty.md) | checks if the `Config` object is empty |
 
 ## File Handling
 Defined in header `config.hpp`

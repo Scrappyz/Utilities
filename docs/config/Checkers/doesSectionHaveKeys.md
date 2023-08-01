@@ -1,3 +1,23 @@
+## Config::doesSectionHaveKeys
+Defined in header `config.hpp`
+
+| |
+| --- |
+| bool doesSectionHaveKeys(const std::string& section = "") |
+
+Checks if the section contains any keys.
+
+## Parameters
+`section` - the section to check
+
+## Return Value
+Returns `true` if the given section has any keys, `false` otherwise.
+
+## Notes
+- Providing no arguments will check if there are keys in the empty section
+
+## Example
+```
 #include <iostream>
 #include "config.hpp"
 
@@ -15,3 +35,12 @@ int main()
     
     return 0;
 }
+```
+
+Output:
+```
+0
+1
+0
+1
+```

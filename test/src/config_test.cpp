@@ -232,10 +232,38 @@ TEST(modifyKeyValue, general)
     EXPECT_EQ(config.getValue("Oppenheimer"), "BOOM");
 }
 
+TEST(clear, general)
+{
+    ConfigTest config(config_path);
+    EXPECT_EQ(config.isEmpty(), false);
+    config.clear();
+    EXPECT_EQ(config.isEmpty(), true);
+}
+
 TEST(isEmpty, general)
 {
     ConfigTest config;
     EXPECT_EQ(config.isEmpty(), true);
     config.addKey("hi");
     EXPECT_EQ(config.isEmpty(), false);
+    config.clear();
+    EXPECT_EQ(config.isEmpty(), true);
+    config.addSection("wassup");
+    EXPECT_EQ(config.isEmpty(), false);
+}
+
+TEST(checkers, general)
+{
+    ConfigTest config;
+    EXPECT_EQ(config.doesSectionExist(""), true);
+    EXPECT_EQ(config.doesSectionExist("section"), false);
+    config.addSection("section");
+    EXPECT_EQ(config.doesSectionExist("section"), true);
+    EXPECT_EQ(config.doesSectionHaveKeys("section"), false);
+    config.addKey("section", "wassup");
+    EXPECT_EQ(config.doesSectionHaveKeys("section"), true);
+    EXPECT_EQ(config.doesSectionHaveKeys(), false);
+    EXPECT_EQ(config.doesKeyHaveValue("section", "wassup"), false);
+    config.modifyKeyValue("section", "wassup", "hello");
+    EXPECT_EQ(config.doesKeyHaveValue("section", "wassup"), true);
 }
