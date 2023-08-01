@@ -1,3 +1,5 @@
+// Github Repo: https://github.com/Scrappyz/Utilities/blob/C%2B%2B/docs/config/config.md
+// Version: 1.0.0
 #pragma once
 
 #include <string>
@@ -43,8 +45,7 @@ class Config {
         // Setters
         void setConfigFromFile(const std::string& config_path)
         {
-            config.clear();
-            config.insert({"", std::unordered_map<std::string, std::string>()});
+            this->clear();
             std::ifstream file(config_path);
             std::string temp;
 
@@ -202,10 +203,21 @@ class Config {
             config.at(section)[key] = new_val;
         }
 
+        void clear()
+        {
+            config.clear();
+            config.insert({"", std::unordered_map<std::string, std::string>()});
+        }
+
         // Checkers
         bool doesSectionExist(const std::string& section) const
         {
             return config.count(section) > 0;
+        }
+
+        bool doesSectionHaveKeys(const std::string& section = "") const
+        {
+            return !config.at(section).empty();
         }
 
         bool doesKeyExist(const std::string& key) const
