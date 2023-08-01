@@ -231,3 +231,11 @@ TEST(modifyKeyValue, general)
     config.modifyKeyValue("Oppenheimer", "BOOM");
     EXPECT_EQ(config.getValue("Oppenheimer"), "BOOM");
 }
+
+TEST(isEmpty, general)
+{
+    ConfigTest config;
+    EXPECT_EQ(config.isEmpty(), true);
+    config.addKey("hi");
+    EXPECT_EQ(config.isEmpty(), false);
+}

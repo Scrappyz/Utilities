@@ -228,6 +228,11 @@ class Config {
             return !config.at(section).at(key).empty();
         }
 
+        bool isEmpty() const
+        {
+            return config.size() == 1 && config.count("") > 0 && config.at("").empty();
+        }
+
         // File Handling
         void saveConfigToFile(const std::string& config_path) const
         {
