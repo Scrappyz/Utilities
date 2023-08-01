@@ -151,7 +151,7 @@ int main()
     config.modifySectionName("section 2", "new section");
 
     // save to a file
-    config.saveConfigToFile("config.txt");
+    config.writeConfigToFile("config.txt");
 
     return 0;
 }
@@ -187,13 +187,6 @@ Defined in header `config.hpp`
 | --- | --- |
 | [getValue](Getters/getValue.md) | returns the value of the key in the given section |
 
-## Setters
-Defined in header `config.hpp`
-
-| | |
-| --- | --- |
-| [setConfigFromFile](Methods/setConfigFromFile.md) | initializes the `Config` object with the contents of the given configuration file |
-
 ## Modifiers
 Defined in header `config.hpp`
 
@@ -227,7 +220,8 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [saveConfigToFile](<File Handling/saveConfigToFile.md>) | save the contents of the `Config` object to a file |
+| [readConfigFromFile](Methods/readConfigFromFile.md) | initializes the `Config` object with the contents of the given configuration file |
+| [writeConfigToFile](<File Handling/writeConfigToFile.md>) | write the contents of the `Config` object to a file |
 
 ## Operators
 Defined in header `config.hpp`

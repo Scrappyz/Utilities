@@ -70,7 +70,7 @@ TEST(constructor, empty_section_is_available_on_initialization)
     EXPECT_EQ(config.doesKeyExist("new key"), true);
 }
 
-TEST(setConfigFromFile, general)
+TEST(readConfigFromFile, general)
 {
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> expected_config = {
         {"", std::unordered_map<std::string, std::string>({{"key1", "val1"}, {"key2", "val2"}, {"key 3", "val3"}, {"key4", "val 4"}, {"key 5", "val 5"}})},
@@ -82,14 +82,14 @@ TEST(setConfigFromFile, general)
     EXPECT_EQ(config.getConfig(), expected_config);
 }
 
-TEST(setConfigFromFile, errors)
+TEST(readConfigFromFile, errors)
 {
     ConfigTest config;
-    EXPECT_THROW(config.setConfigFromFile("__unknown__.txt"), std::exception);
-    EXPECT_NO_THROW(config.setConfigFromFile("__unknown__.txt", false));
+    EXPECT_THROW(config.readConfigFromFile("__unknown__.txt"), std::exception);
+    EXPECT_NO_THROW(config.readConfigFromFile("__unknown__.txt", false));
 }
 
-TEST(saveConfigToFile, general)
+TEST(writeConfigToFile, general)
 {
     ConfigTest config(config_path);
     config.removeKey("key1");
@@ -100,7 +100,7 @@ TEST(saveConfigToFile, general)
     config.modifyKeyName("Section 1", "key 3", "mario bros");
     config.modifyKeyValue("Section 1", "mario bros", "mario & luigi");
 
-    config.saveConfigToFile(path::joinPath(test_path, "actual.txt"));
+    config.writeConfigToFile(path::joinPath(test_path, "actual.txt"));
 
     ConfigTest expected_config(path::joinPath(test_path, "expected.txt"));
     ConfigTest actual_config(path::joinPath(test_path, "actual.txt"));

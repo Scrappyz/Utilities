@@ -40,7 +40,7 @@ int main()
     config.modifySectionName("section 2", "new section");
 
     // save to a file
-    config.saveConfigToFile("config.txt");
+    config.writeConfigToFile("config.txt");
 
     return 0;
 }
