@@ -43,17 +43,20 @@ class Config {
         }
 
         // Setters
-        void setConfigFromFile(const std::string& config_path)
+        void setConfigFromFile(const std::string& config_path, int error = 1)
         {
-            this->clear();
             std::ifstream file(config_path);
-            std::string temp;
 
             if(!file.is_open()) {
-                throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
+                if(error >= 1) {
+                    throw std::runtime_error("[Error] Could not open configuration file at \"" + config_path + "\"");
+                }
+                return;
             }
 
+            this->clear();
             std::string section;
+            std::string temp;
             while(getline(file, temp)) {
                 std::string key, value;
 

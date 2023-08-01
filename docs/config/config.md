@@ -11,6 +11,10 @@ The config library is a config file parser in C++ that aims to simplify the proc
 - [\<unordered_map>](https://en.cppreference.com/w/cpp/container/unordered_map)
 - [\<fstream>](https://en.cppreference.com/w/cpp/io/basic_fstream)
 
+## Installation
+1. Download [config.hpp](../../include/config.hpp)
+2. Include `config.hpp` in your project
+
 ## Format
 The config library is capable of parsing files that can be read in plain text such as `txt` files. It can parse plain text that follows this format:
 ```
@@ -38,6 +42,7 @@ key4 = "val 4"
 Each group of keys can be divided into sections and each key can be assigned a value with the `=` symbol.
 
 ## Usage
+### Initializing
 ```
 #include <iostream>
 #include "config.hpp"
@@ -47,23 +52,125 @@ using namespace std;
 int main()
 {
     std::string config_path = "config.txt";
-    Config config(config_path);
-    std::cout << config.getValueOf("key1") << std::endl;
-    std::cout << config.getValueOf("Section 1", "key2") << std::endl;
-    std::cout << config.getValueOf("Section 2", "key 3") << std::endl;
-    std::cout << config.getValueOf("Section 2", "key4") << std::endl;
+    Config config(config_path); // initialize config with the contents of "config.txt"
 
     return 0;
 }
 ```
-First we initialize the `Config` object by passing in the path to the configuration file. Then we can access its values with the method [getValueOf](Methods/getValueOf.md). You can pass a key to it or you can pass both the section and key you are trying to get the value of. \
-<br>
-Using the example in the [format](#format) section, the output would be:
+Using a file with the format like in the [format](#format) section, we initialize the `Config` object by passing in the path to the configuration file. Initializing the `Config` file is only optional. If you want to use the `Config` object immediately, you can do so.
+
+### Modifying
 ```
-val1
-val2
-val3
-val 4
+#include <iostream>
+#include "config.hpp"
+
+int main()
+{
+    Config config;
+
+    // add new key with the name "main key" with a value of "main val"
+    config.addKeyValue("main key", "main val");
+
+    // add new key with the name "dir" with a value of "my/path/to/file"
+    config.addKeyValue("dir", "my/path/to/file");
+
+    // add new section called "section 1"
+    config.addSection("section 1");
+
+    // add a new key called "secKey" with a value of "secVal" in "section 1"
+    config.addKeyValue("section 1", "secKey", "secVal");
+    
+    // add more keys to "section 1"
+    config.addKeyValue("section 1", "secKey2", "secVal2");
+    config.addKeyValue("section 1", "secKey3", "secVal3");
+
+    // modify the value of "secKey2" in "section 1" to "wassup"
+    config.modifyKeyValue("section 1", "secKey2", "wassup");
+
+    // modify the name of "secKey3" to "hello"
+    config.modifyKeyName("section 1", "secKey3", "hello");
+
+    // delete key "secKey" from "section 1"
+    config.removeKey("section 1", "secKey");
+
+    // add another section called "section 2"
+    config.addSection("section 2");
+
+    // add a key with no value to "section 2"
+    config.addKey("section 2", "noval");
+
+    // rename "section 2" to "new section"
+    config.modifySectionName("section 2", "new section");
+
+    return 0;
+}
+```
+We can modify the `Config` object by using its `add`, `remove`, and `modify` methods.
+
+### Saving
+```
+#include <iostream>
+#include "config.hpp"
+
+int main()
+{
+    Config config;
+
+    // add new key with the name "main key" with a value of "main val"
+    config.addKeyValue("main key", "main val");
+
+    // add new key with the name "dir" with a value of "my/path/to/file"
+    config.addKeyValue("dir", "my/path/to/file");
+
+    // add new section called "section 1"
+    config.addSection("section 1");
+
+    // add a new key called "secKey" with a value of "secVal" in "section 1"
+    config.addKeyValue("section 1", "secKey", "secVal");
+    
+    // add more keys to "section 1"
+    config.addKeyValue("section 1", "secKey2", "secVal2");
+    config.addKeyValue("section 1", "secKey3", "secVal3");
+
+    // modify the value of "secKey2" in "section 1" to "wassup"
+    config.modifyKeyValue("section 1", "secKey2", "wassup");
+
+    // modify the name of "secKey3" to "hello"
+    config.modifyKeyName("section 1", "secKey3", "hello");
+
+    // delete key "secKey" from "section 1"
+    config.removeKey("section 1", "secKey");
+
+    // add another section called "section 2"
+    config.addSection("section 2");
+
+    // add a key with no value to "section 2"
+    config.addKey("section 2", "noval");
+
+    // rename "section 2" to "new section"
+    config.modifySectionName("section 2", "new section");
+
+    // save to a file
+    config.saveConfigToFile("config.txt");
+
+    return 0;
+}
+```
+We can save the contents of the `Config` object to a file. In this example, after modifying the `Config` object, we are saving its contents to a file named `config.txt`.
+
+<br>
+
+After saving, this is what the `config.txt` looks like:
+```
+"main key" = "main val"
+dir = my/path/to/file
+
+[section 1]
+secKey2 = wassup
+hello = secVal3
+
+[new section]
+noval = 
 ```
 
 ## Constructors
@@ -78,7 +185,7 @@ Defined in header `config.hpp`
 
 | | |
 | --- | --- |
-| [getValueOf](Getters/getValueOf.md) | returns the value of the key in the given section |
+| [getValue](Getters/getValue.md) | returns the value of the key in the given section |
 
 ## Setters
 Defined in header `config.hpp`
@@ -100,6 +207,9 @@ Defined in header `config.hpp`
 | [modifySectionName](Modifiers/modifySectionName.md) | modify the name of a section |
 | [modifyKeyName](Modifiers/modifyKeyName.md) | modify the name of a key from a section |
 | [modifyKeyValue](Modifiers/modifyKeyValue.md) | modify the value of a key from a section |
+| [clear](Modifiers/clear.md) | clears all contents of the `Config` object |
+| [clearSection](Modifiers/clearSection.md) | deletes all keys from a section |
+| [clearKeyValue](Modifiers/clearKeyValue.md) | clears the value of the given key |
 
 ## Checkers
 Defined in header `config.hpp`

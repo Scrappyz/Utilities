@@ -70,7 +70,7 @@ TEST(constructor, empty_section_is_available_on_initialization)
     EXPECT_EQ(config.doesKeyExist("new key"), true);
 }
 
-TEST(setConfig, general)
+TEST(setConfigFromFile, general)
 {
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> expected_config = {
         {"", std::unordered_map<std::string, std::string>({{"key1", "val1"}, {"key2", "val2"}, {"key 3", "val3"}, {"key4", "val 4"}, {"key 5", "val 5"}})},
@@ -80,6 +80,13 @@ TEST(setConfig, general)
     ConfigTest config(config_path);
 
     EXPECT_EQ(config.getConfig(), expected_config);
+}
+
+TEST(setConfigFromFile, errors)
+{
+    ConfigTest config;
+    EXPECT_THROW(config.setConfigFromFile("__unknown__.txt"), std::exception);
+    EXPECT_NO_THROW(config.setConfigFromFile("__unknown__.txt", false));
 }
 
 TEST(saveConfigToFile, general)
