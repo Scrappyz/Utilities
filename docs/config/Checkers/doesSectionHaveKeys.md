@@ -14,7 +14,7 @@ Checks if the section contains any keys.
 Returns `true` if the given section has any keys, `false` otherwise.
 
 ## Notes
-- Providing no arguments will check if there are keys in the empty section
+- Providing no arguments will check if there are keys in the "" section
 
 ## Example
 ```

@@ -176,6 +176,14 @@ class Config {
 
         void modifySectionName(const std::string& section, const std::string& new_section)
         {
+            if(section.empty()) {
+                return;
+            }
+
+            if(config.count(new_section) > 0) {
+                throw std::logic_error("[Error] \"" + new_section + "\" already exists");
+            }
+
             std::unordered_map<std::string, std::string> keys = config.at(section);
             config.erase(section);
             config.insert({new_section, keys});
@@ -200,13 +208,28 @@ class Config {
 
         void modifyKeyValue(const std::string& section, const std::string& key, const std::string& new_val)
         {
-            config.at(section)[key] = new_val;
+            config.at(section).at(key) = new_val;
         }
 
         void clear()
         {
             config.clear();
             config.insert({"", std::unordered_map<std::string, std::string>()});
+        }
+
+        void clearSection(const std::string& section = "")
+        {
+            config.at(section).clear();
+        }
+
+        void clearKeyValue(const std::string& key)
+        {
+            config.at("").at(key).clear();
+        }
+
+        void clearKeyValue(const std::string& section, const std::string& key)
+        {
+            config.at(section).at(key).clear();
         }
 
         // Checkers
