@@ -22,13 +22,21 @@ class Config {
         }
 
         // Getters
-        const std::string& getValue(const std::string& key) const
+        std::string getValue(const std::string& key, int error = 1) const
         {
-            return config.at("").at(key);
+            return getValue("", key, error);
         }
 
-        const std::string& getValue(const std::string& section, const std::string& key) const
+        std::string getValue(const std::string& section, const std::string& key, int error = 1) const
         {
+            if(error >= 1) {
+                return config.at(section).at(key);
+            }
+
+            if(config.count(section) < 1 || config.at(section).count(key) < 1) {
+                return std::string();
+            }
+
             return config.at(section).at(key);
         }
 

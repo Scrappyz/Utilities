@@ -121,7 +121,26 @@ TEST(getValue, general)
     EXPECT_EQ(config.getValue("Section 2", "key 3"), "val3");
     EXPECT_EQ(config.getValue("Section 2", "key4"), "val 4");
     EXPECT_EQ(config.getValue("Section 2", "key 5"), "val 5");
+}
 
+TEST(getValue, errors)
+{
+    ConfigTest config;
+    EXPECT_THROW(config.getValue("hello"), std::exception);
+    EXPECT_THROW(config.getValue("hello", 5), std::exception);
+    EXPECT_EQ(config.getValue("hello", false), "");
+    EXPECT_EQ(config.getValue("hello", -5), "");
+
+    config.addKeyValue("hello", "hi");
+    EXPECT_EQ(config.getValue("hello"), "hi");
+    EXPECT_EQ(config.getValue("hello", 5), "hi");
+    EXPECT_EQ(config.getValue("hello", false), "hi");
+    EXPECT_EQ(config.getValue("hello", -5), "hi");
+
+    EXPECT_THROW(config.getValue("section", "hello"), std::exception);
+    EXPECT_THROW(config.getValue("section", "hello", 3), std::exception);
+    EXPECT_EQ(config.getValue("section", "hello", false), "");
+    EXPECT_EQ(config.getValue("section", "hello", -3), "");
 }
 
 TEST(addSection, general)
