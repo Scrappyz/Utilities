@@ -330,6 +330,65 @@ namespace path {
         }
     }
 
+    inline bool hasSameContent(const std::filesystem::path& p1, const std::filesystem::path& p2)
+    {
+        // for(const auto& i : std::filesystem::recursive_directory_iterator(p1)) {
+        //     std::cout << std::filesystem::relative(i.path(), p1) << std::endl;
+        // }
+
+        // std::cout << "=============" << std::endl;
+
+        // for(const auto& i : std::filesystem::recursive_directory_iterator(p2)) {
+        //     std::cout << std::filesystem::relative(i.path(), p2) << std::endl;
+        // }
+
+        if(!std::filesystem::exists(p1) || !std::filesystem::exists(p2)) {
+            return false;
+        }
+
+        bool is_p1_dir = std::filesystem::is_directory(p1);
+        bool is_p2_dir = std::filesystem::is_directory(p2);
+
+        if(is_p1_dir && !is_p2_dir || !is_p1_dir && is_p2_dir) {
+            return false;
+        }
+
+        if(is_p1_dir && is_p2_dir) {
+            auto i = std::filesystem::recursive_directory_iterator(p1);
+            auto j = std::filesystem::recursive_directory_iterator(p2);
+            while(i != std::filesystem::recursive_directory_iterator() && j != std::filesystem::recursive_directory_iterator()) {
+                if(std::filesystem::relative(i->path(), p1) != std::filesystem::relative(j->path(), p2)) {
+                    return false;
+                }
+                i++;
+                j++;
+            }
+
+            if(i == std::filesystem::recursive_directory_iterator() && j == std::filesystem::recursive_directory_iterator()) {
+                return true;
+            }
+
+            return false;
+        } else {
+            std::ifstream f1(p1, std::ifstream::binary|std::ifstream::ate);
+            std::ifstream f2(p2, std::ifstream::binary|std::ifstream::ate);
+
+            if (f1.fail() || f2.fail()) {
+                return false;
+            }
+
+            if (f1.tellg() != f2.tellg()) {
+                return false;
+            }
+
+            f1.seekg(0, std::ifstream::beg);
+            f2.seekg(0, std::ifstream::beg);
+            return std::equal(std::istreambuf_iterator<char>(f1.rdbuf()),
+                                std::istreambuf_iterator<char>(),
+                                std::istreambuf_iterator<char>(f2.rdbuf()));
+        }
+    }
+
     inline std::string find(const std::filesystem::path& search_path, const std::string& file_to_find, int max_depth)
     {
         if(std::filesystem::exists(search_path)) {
