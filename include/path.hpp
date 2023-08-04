@@ -25,6 +25,7 @@ namespace path {
     enum class SizeMetric {Byte, Kilobyte, Megabyte, Gigabyte};
 
     namespace _private { // forward declaration
+        std::string errorMessage(const std::string& function_name, const std::string& message);
         char copyWarning(const std::filesystem::path& path);
         bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op);
         bool execute(const char* command, bool wait);
@@ -220,7 +221,7 @@ namespace path {
         #elif defined(__linux__) || defined(__apple__)
             source_path = filesystem::canonical("/proc/self/exe");
         #else
-            throw std::runtime_error("[Error][sourcePath] Unknown Operating System");
+            throw std::runtime_error(_private::errorMessage(__func__, "Unknown Operating System"));
         #endif
         return source_path.parent_path().string();
     }
@@ -342,15 +343,19 @@ namespace path {
         //     std::cout << std::filesystem::relative(i.path(), p2) << std::endl;
         // }
 
-        if(!std::filesystem::exists(p1) || !std::filesystem::exists(p2)) {
-            return false;
+        if(!std::filesystem::exists(p1)) {
+            throw std::runtime_error(_private::errorMessage(__func__, "\"" + p1.string() + "\" does not exist"));
+        }
+
+        if(!std::filesystem::exists(p2)) {
+            throw std::runtime_error(_private::errorMessage(__func__, "\"" + p2.string() + "\" does not exist"));
         }
 
         bool is_p1_dir = std::filesystem::is_directory(p1);
         bool is_p2_dir = std::filesystem::is_directory(p2);
 
         if(is_p1_dir && !is_p2_dir || !is_p1_dir && is_p2_dir) {
-            return false;
+            throw std::runtime_error(_private::errorMessage(__func__, "Arguments need to be both files or both folders"));
         }
 
         if(is_p1_dir && is_p2_dir) {
@@ -373,11 +378,11 @@ namespace path {
             std::ifstream f1(p1, std::ifstream::binary|std::ifstream::ate);
             std::ifstream f2(p2, std::ifstream::binary|std::ifstream::ate);
 
-            if (f1.fail() || f2.fail()) {
+            if(f1.fail() || f2.fail()) {
                 return false;
             }
 
-            if (f1.tellg() != f2.tellg()) {
+            if(f1.tellg() != f2.tellg()) {
                 return false;
             }
 
@@ -402,7 +407,7 @@ namespace path {
             }
             return std::string();
         } else {
-            throw std::runtime_error("[Error][find] Path does not exists");
+            throw std::runtime_error(_private::errorMessage(__func__, "Path does not exist"));
         }
     }
 
@@ -426,7 +431,7 @@ namespace path {
             }
             return matches;
         } else {
-            throw std::runtime_error("[Error][find] Path does not exists");
+            throw std::runtime_error(_private::errorMessage(__func__, "Path does not exist"));
         }
     }
 
@@ -487,6 +492,18 @@ namespace path {
 
     namespace _private {
 
+        inline std::string errorMessage(const std::string& function_name, const std::string& message)
+        {
+            std::string error = "[Error]";
+            #ifdef _DEBUG
+                error.append("[" + function_name + "]");
+            #endif
+            error.push_back(' ');
+            error.append(message);
+
+            return error;
+        }
+
         inline char copyWarning(const std::filesystem::path& path)
         {
             char ch;
@@ -528,7 +545,7 @@ namespace path {
         inline bool copy(std::filesystem::path from, std::filesystem::path to, bool move, const CopyOption& op)
         {
             if(!std::filesystem::exists(from)) {
-                throw std::runtime_error("[Error][copy] \"" + from.string() + "\" does not exist");
+                throw std::runtime_error(_private::errorMessage(__func__, "\"" + from.string() + "\" does not exist"));
             }
 
             char ch;
@@ -538,7 +555,7 @@ namespace path {
                 }
 
                 if(!std::filesystem::is_directory(to)) {
-                    throw std::runtime_error("[Error][copy] \"" + to.filename().string() + "\" is a file");
+                    throw std::runtime_error(_private::errorMessage(__func__, "\"" + to.filename().string() + "\" is a file"));
                 }
 
                 if(op == CopyOption::OverwriteAll) {

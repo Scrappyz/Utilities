@@ -154,8 +154,33 @@ TEST(joins, end_separator)
     EXPECT_EQ(joinPath({"a/b/c/d/../../", "e/f/..", "g/"}), "a\\b\\e\\g\\");
 }
 
+TEST(hasSameContent, not_exist)
+{
+    EXPECT_THROW(hasSameContent("__wassup__.txt", "__hello.txt"), std::exception);
+    EXPECT_THROW(hasSameContent(path::joinPath(test_path, "temp/shaggy.txt"), "__wassup__.txt"), std::exception);
+    EXPECT_THROW(hasSameContent("__wassup.txt", path::joinPath(test_path, "temp/shaggy.txt")), std::exception);
+}
+
+TEST(hasSameContent, not_same_type)
+{
+    EXPECT_THROW(hasSameContent(path::joinPath(test_path, "temp"), path::joinPath(test_path, "temp/shaggy.txt")), std::exception);
+    EXPECT_THROW(hasSameContent(path::joinPath(test_path, "temp/shaggy.txt"), path::joinPath(test_path, "temp")), std::exception);
+}
+
+TEST(hasSameContent, directories)
+{
+    ASSERT_TRUE(hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "same2")));
+    ASSERT_FALSE(hasSameContent(path::joinPath(test_path, "same1"), path::joinPath(test_path, "temp")));
+}
+
+TEST(hasSameContent, files)
+{
+    ASSERT_TRUE(hasSameContent(path::joinPath(test_path, "temp/shaggy.txt"), path::joinPath(test_path, "temp/shaggy1.txt")));
+    ASSERT_FALSE(hasSameContent(path::joinPath(test_path, "temp/sand1.txt"), path::joinPath(test_path, "temp/shaggy.txt")));
+}
+
 TEST(copy, general)
 {
-    ASSERT_TRUE(testCopy(path::joinPath(test_path, "sandbox"), path::joinPath(test_path, "temp")));
-    ASSERT_TRUE(testCopy(path::joinPath(test_path, "sandbox/"), path::joinPath(test_path, "temp")));
+    ASSERT_TRUE(testCopy(path::joinPath(test_path, "same1"), path::joinPath(test_path, "temp")));
+    ASSERT_TRUE(testCopy(path::joinPath(test_path, "same1/"), path::joinPath(test_path, "temp")));
 }
