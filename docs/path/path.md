@@ -47,6 +47,7 @@ Defined in namespace `path`
 | [find](Functions/find.md) | finds a given file |
 | [findAll](Functions/findAll.md) | finds multiple of the same file |
 | [hasFileExtension](Functions/hasFileExtension.md) | checks if a given path or filename has an extension |
+| [hasSameContent](Functions/hasSameContent.md) | checks if two directories have the same files or if two files have the same data |
 | [isAbsolutePath](Functions/isAbsolutePath.md) | checks if the given path is an absolute path |
 | [isDirectorySeparator](Functions/isDirectorySeparator.md) | checks if a given character is a directory separator character |
 | [isRelativePath](Functions/isRelativePath.md) | checks if the given path is a relative path |

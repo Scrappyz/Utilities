@@ -333,16 +333,6 @@ namespace path {
 
     inline bool hasSameContent(const std::filesystem::path& p1, const std::filesystem::path& p2)
     {
-        // for(const auto& i : std::filesystem::recursive_directory_iterator(p1)) {
-        //     std::cout << std::filesystem::relative(i.path(), p1) << std::endl;
-        // }
-
-        // std::cout << "=============" << std::endl;
-
-        // for(const auto& i : std::filesystem::recursive_directory_iterator(p2)) {
-        //     std::cout << std::filesystem::relative(i.path(), p2) << std::endl;
-        // }
-
         if(!std::filesystem::exists(p1)) {
             throw std::runtime_error(_private::errorMessage(__func__, "\"" + p1.string() + "\" does not exist"));
         }
