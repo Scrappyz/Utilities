@@ -1,5 +1,5 @@
 #include "utility.hpp"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <typeinfo>
 
 using namespace std;
@@ -27,6 +27,20 @@ TEST(mod, general)
     EXPECT_EQ(mathUtil::mod(-27, 10), 3);
     EXPECT_EQ(mathUtil::mod(-3, 11), 8);
     EXPECT_EQ(mathUtil::mod(-1, 11), 10);
+}
+
+TEST(gcd, general)
+{
+    EXPECT_EQ(mathUtil::gcd(2322, 654), 6);
+    EXPECT_EQ(mathUtil::gcd(654, 2322), 6);
+    EXPECT_EQ(mathUtil::gcd(270, 192), 6);
+    EXPECT_EQ(mathUtil::gcd(192, 270), 6);
+}
+
+TEST(gcd, edge_case)
+{
+    EXPECT_EQ(mathUtil::gcd(0, 12), 12);
+    EXPECT_EQ(mathUtil::gcd(12, 0), 12);
 }
 
 TEST(utility, getSum)
