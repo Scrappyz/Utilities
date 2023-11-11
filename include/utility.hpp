@@ -294,6 +294,52 @@ namespace utility {
             }
             return v;
         }
+
+        bool startsWith(const std::string& str, const std::string& sub)
+        {
+            if(str.size() < sub.size()) {
+                return false;
+            }
+
+            int i = 0;
+            int j = 0;
+            while(j < sub.size()) {
+                if(str[i] != sub[j]) {
+                    break;
+                }
+                i++;
+                j++;
+            }
+
+            if(j >= sub.size()) {
+                return true;
+            }
+
+            return false;
+        }
+
+        bool endsWith(const std::string& str, const std::string& sub)
+        {
+            if(str.size() < sub.size()) {
+                return false;
+            }
+
+            int i = str.size() - sub.size();
+            int j = 0;
+            while(i < str.size() && j < sub.size()) {
+                if(str[i] != sub[j]) {
+                    break;
+                }
+                i++;
+                j++;
+            }
+
+            if(i >= str.size() && j >= sub.size()) {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     namespace parse {

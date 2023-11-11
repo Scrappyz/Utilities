@@ -166,6 +166,22 @@ TEST(utility, split)
     EXPECT_EQ(stringUtil::split(input7, separators7), expected7);
 }
 
+TEST(utility, startsWith)
+{
+    ASSERT_TRUE(stringUtil::startsWith("abcde", "abc"));
+    ASSERT_TRUE(stringUtil::startsWith("abc", "abc"));
+    ASSERT_FALSE(stringUtil::startsWith("ab", "abc"));
+    ASSERT_FALSE(stringUtil::startsWith("accde", "abc"));
+}
+
+TEST(utility, endsWith)
+{
+    ASSERT_TRUE(stringUtil::endsWith("abcdef", "def"));
+    ASSERT_TRUE(stringUtil::endsWith("abc", "abc"));
+    ASSERT_FALSE(stringUtil::endsWith("ab", "abc"));
+    ASSERT_FALSE(stringUtil::endsWith("abcd", "ab"));
+}
+
 TEST(utility, parseInteger)
 {
     EXPECT_THROW(parseUtil::parseInteger(""), exception);
