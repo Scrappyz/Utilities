@@ -81,6 +81,14 @@ TEST(utility, getMidrange)
     EXPECT_EQ(mathUtil::getMidrange({5,89,7,4,1,3,0,5,8}), 44.5);
 }
 
+TEST(utility, precision)
+{
+    EXPECT_EQ(mathUtil::precision(1.69325, 2), 1.69);
+    EXPECT_EQ(mathUtil::precision(6981.82967, 4), 6981.8296);
+    EXPECT_EQ(mathUtil::precision(69, 5), 69);
+    EXPECT_EQ(mathUtil::precision(85.85, 0), 85);
+}
+
 TEST(utility, toupper)
 {
     string str = "abcd";

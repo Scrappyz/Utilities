@@ -175,6 +175,19 @@ namespace utility {
             return getMidrange(std::vector<T>(v));
         }
         
+        double precision(double n, int decimal_places)
+        {
+            if(decimal_places < 0) {
+                return n;
+            }
+            
+            int mult = 1;
+            for(int i = 0; i < decimal_places; i++) {
+                mult *= 10;
+            }
+
+            return static_cast<double>(static_cast<int>(n * mult)) / mult;
+        }
     }
 
     namespace string {
