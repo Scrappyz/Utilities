@@ -87,6 +87,7 @@ TEST(utility, precision)
     EXPECT_EQ(mathUtil::precision(6981.82967, 4), 6981.8296);
     EXPECT_EQ(mathUtil::precision(69, 5), 69);
     EXPECT_EQ(mathUtil::precision(85.85, 0), 85);
+    EXPECT_EQ(mathUtil::precision(30.36, 4), 30.36);
 }
 
 TEST(utility, toupper)

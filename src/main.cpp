@@ -11,7 +11,7 @@ int main()
     std::cout << (a == b) << std::endl;
     std::cout << mathUtil::precision(a, 2) << " + " << mathUtil::precision(b, 2) << std::endl;
     std::cout << (mathUtil::precision(a, 2) == mathUtil::precision(b, 2)) << std::endl;
-    std::cout << mathUtil::precision(30, 1) << std::endl;
+    std::cout << mathUtil::precision(30.36, 4) << std::endl;
 
     return 0;
 }
